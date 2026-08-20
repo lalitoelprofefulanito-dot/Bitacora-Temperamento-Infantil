@@ -4,16 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#132A2E">
-<title>Bitácora Reflexiva del Temperamento</title>
+<title>Conociéndonos — Una guía para comprender y acompañar</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Bitácora">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#132A2E; --ink-2:#26454A; --muted:#596C6F;
@@ -42,6 +39,22 @@ body{
   font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
   padding-bottom:calc(76px + env(safe-area-inset-bottom));
 }
+/* Accesibilidad y lectura sencilla */
+body.a11y-large{font-size:19px}
+body.a11y-large h1{font-size:clamp(30px,8vw,42px)}
+body.a11y-large h2{font-size:26px}
+body.a11y-large .hint, body.a11y-large .foot{font-size:14px}
+body.a11y-contrast{--ink:#000;--ink-2:#111;--muted:#333;--paper:#fff;--surface:#fff;--line:#555;--jade:#075c42;--jade-soft:#e5f5ed}
+body.a11y-contrast .card, body.a11y-contrast .readout, body.a11y-contrast details{border-color:#555}
+.a11y-note{font-size:13px;color:var(--muted);line-height:1.5}
+.connection-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;margin-top:6px;color:var(--muted)}
+.connection-status .dot{width:8px;height:8px;border-radius:50%;background:#2E6E5B;display:inline-block}
+.connection-status.offline .dot{background:#9C4A48}
+.context-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.context-chip{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px;text-align:left;font:inherit;color:var(--ink);min-height:46px}
+.context-chip.on{border-color:var(--jade);background:var(--jade-soft);font-weight:600}
+@media(max-width:520px){.context-grid{grid-template-columns:1fr}}
+input:focus-visible,textarea:focus-visible,button:focus-visible,select:focus-visible{outline:3px solid #1d6fa5;outline-offset:2px}
 h1,h2,h3{font-family:var(--display); font-weight:600; margin:0; letter-spacing:-.01em;
   font-variation-settings:"SOFT" 40,"WONK" 1;}
 button{font-family:inherit; font-size:inherit; cursor:pointer}
@@ -50,6 +63,10 @@ a{color:var(--jade)}
 /* chrome */
 header.app{
   background:var(--ink); color:#EAF0EE; padding:calc(16px + env(safe-area-inset-top)) 20px 16px;
+  position:relative;
+}
+header.app.con-captura{
+  padding-top:calc(52px + env(safe-area-inset-top));
 }
 header.app .eyebrow{
   font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
@@ -230,19 +247,63 @@ details .inner{font-size:13px; color:var(--ink-2); line-height:1.55; margin-top:
 @media (prefers-reduced-motion:no-preference){.view.on{animation:fade .18s ease-out}}
 @keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .back{background:none;border:0;color:#A9C2BB;font-size:13px;padding:0 0 8px;font-family:var(--sans)}
+.shot{
+  position:absolute; top:calc(12px + env(safe-area-inset-top)); left:14px; z-index:5;
+  display:none; align-items:center; gap:7px;
+  background:#FFFFFF; color:var(--ink); border:none; border-radius:99px;
+  padding:7px 13px 7px 9px; box-shadow:0 2px 8px rgba(0,0,0,.35);
+  font-family:var(--sans); font-size:12.5px; font-weight:600;
+}
+.shot svg{display:block; flex:none; width:15px; height:15px}
+.shot .lbl{white-space:nowrap}
+.shot:active{background:#EDEDED}
+.shot.working{opacity:.55}
+
+.quick-event{display:flex;align-items:center;gap:12px;width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--paper);color:var(--ink);text-align:left;cursor:pointer;transition:.15s ease}
+.quick-event:hover,.quick-event:focus-visible{border-color:var(--jade);outline:2px solid transparent}
+.quick-event.on{border-color:var(--jade);background:var(--jade-soft);box-shadow:0 0 0 1px var(--jade)}
+.btn.small{padding:8px 10px;font-size:12px;white-space:nowrap}
+@media(max-width:520px){.quick-event{padding:12px 10px}.quick-event small{font-size:11.5px}}
+
+.pattern-list{margin-top:8px}.pattern-item{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);font-size:13.5px}.pattern-item:first-of-type{margin-top:5px}.pattern-item strong{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ink)}
+
+.flow-integrado{margin-top:8px;display:grid;gap:6px}
+.flow-chip,.flow-note{font-size:12px;line-height:1.45;padding:8px 10px;border-radius:10px;background:var(--soft,#f3f6f3);color:var(--text,#233)}
+.flow-note{background:var(--paper,#fff);border:1px solid var(--line,#e2e5e1)}
+
+</style>
+
+<style id="v23-family-ui">
+.family-intro{margin:10px 0 18px}
+.pedagogia{margin:10px 0;border:1px solid var(--line,#ddd);border-radius:12px;padding:0;background:var(--card,#fff)}
+.pedagogia summary{cursor:pointer;padding:11px 13px;font-weight:600;list-style:none}
+.pedagogia summary::-webkit-details-marker{display:none}
+.pedagogia-body{padding:0 13px 13px;font-size:14px;line-height:1.5}
+.rasgo-card .m{display:block}
+.rasgo-card .t{display:block}
+@media(max-width:600px){
+  .family-intro h2{font-size:18px}
+  .pedagogia-body{font-size:13.5px}
+}
 </style>
 </head>
 <body>
 
 <header class="app">
   <button class="back" id="back" style="display:none">‹ Volver</button>
-  <div class="eyebrow" id="eyebrow">Bitácora reflexiva</div>
-  <h1 id="title">Temperamento infantil</h1>
+  <button class="shot" id="shot" type="button" aria-label="Descargar esta pantalla como imagen" title="Descargar esta pantalla como imagen">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v11.5"/><path d="M7 10.5l5 5 5-5"/><path d="M4.5 19.5h15"/></svg>
+    <span class="lbl">Descargar</span>
+  </button>
+  <div class="eyebrow" id="eyebrow">CONOCIÉNDONOS</div>
+  <h1 id="title">Observación familiar</h1>
   <div class="sub" id="sub">9 rasgos · observación doméstica</div>
+  <div class="connection-status" id="connection-status" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="connection-label">Comprobando conexión…</span></div>
 </header>
 
 <main>
   <section class="view on" id="v-rasgos"></section>
+  <section class="view" id="v-rapido"></section>
   <section class="view" id="v-rasgo"></section>
   <section class="view" id="v-form"></section>
   <section class="view" id="v-espejo"></section>
@@ -253,7 +314,7 @@ details .inner{font-size:13px; color:var(--ink-2); line-height:1.55; margin-top:
 <nav class="tabs">
   <button data-tab="rasgos" class="on"><span class="ic">9</span>Rasgos</button>
   <button data-tab="espejo"><span class="ic">↔</span>Espejo</button>
-  <button data-tab="perfil"><span class="ic">◈</span>Perfil</button>
+  <button data-tab="perfil"><span class="ic">◈</span>Patrones</button>
 </nav>
 
 <div id="overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div>
@@ -265,29 +326,37 @@ const RASGOS = [
   {
     id: 1,
     nombre: "Intensidad de la respuesta",
+
     corto: "Intensidad",
-    eje: "Intensidad alta",
+    descripcionCorta: "¿Qué tan fuerte fue la reacción?",
+    eje: "Intensidad de la respuesta",
     tipo: "num",
-    unidad: "minutos",
+    unidad: "escala 1–10",
     umbral: [
-      4,
-      10
+      3,
+      7
     ],
-    situacionLabel: "Estímulo o frustración del entorno",
-    datoLabel: "Duración del episodio (minutos)",
+    info: {
+      observamos: "Qué tan intensa fue la reacción del niño o la niña ante una situación. Intensidad y duración son datos diferentes: una reacción puede ser muy intensa y breve, o menos intensa y prolongada.",
+      pregunta: "Qué ocurrió antes, si hubo anticipación, cómo estaba el niño o niña y qué apoyo recibió.",
+      noConcluyas: "Que una reacción intensa significa que el niño es problemático, malcriado o incapaz de regularse.",
+      proposito: "Identificar qué situaciones tienden a generar respuestas más intensas y qué condiciones ayudan a atravesarlas con mayor bienestar."
+    },
+    situacionLabel: "Situación que provocó o acompañó la reacción",
+    datoLabel: "Intensidad observada (1–10)",
     situaciones: [
-      "Se le acabó el tiempo de pantalla/TV",
-      "Le negamos un dulce o antojo",
-      "Se le rompió algo que estaba haciendo",
-      "No pudo terminar un juego o actividad",
-      "Un hermano o amigo le quitó algo",
-      "Se cayó o se golpeó jugando",
-      "Le pedimos que se detuviera de algo que disfrutaba",
-      "Perdió en un juego o competencia",
-      "Le negamos comprar algo en la tienda"
+      "Terminó una actividad que disfrutaba",
+      "Recibió una negativa o un límite",
+      "Algo que estaba haciendo salió diferente a lo esperado",
+      "No pudo terminar una actividad",
+      "Otra persona tomó o interrumpió algo que estaba usando",
+      "Tuvo un accidente, golpe o caída",
+      "Necesitó detener una actividad agradable",
+      "Perdió o cometió un error en un juego o actividad",
+      "Tuvo que esperar o posponer algo que quería"
     ],
     q1: {
-      t: "¿Anticipaste el cambio o la frustración con aviso previo?",
+      t: "¿La situación o el límite se anticipó con tiempo suficiente?",
       o: [
         "Sí",
         "No",
@@ -296,7 +365,7 @@ const RASGOS = [
       ok: "Sí"
     },
     q2: {
-      t: "¿Estabas disponible y con atención en ese momento?",
+      t: "¿Había una persona adulta disponible para acompañar la situación?",
       o: [
         "Sí",
         "No"
@@ -304,15 +373,15 @@ const RASGOS = [
       ok: "Sí"
     },
     pauta: {
-      ambas: "Anticipaste el cambio y estabas disponible: la duración registrada probablemente refleja intensidad genuina. Confía en la banda sugerida.",
-      ninguna: "No hubo aviso previo ni tu disponibilidad plena: parte de la duración pudo deberse a la sorpresa o a que la reacción escaló mientras tú reaccionabas, no solo a la intensidad del niño/a. Considera ajustar tu puntuación final por debajo de la banda sugerida.",
-      mixta: "Solo una de las dos condiciones se cumplió. Usa tu criterio: pondera cuál pesó más en este episodio antes de fijar tu puntuación."
+      ambas: "Hubo anticipación y una persona adulta disponible: considera estos factores al interpretar la intensidad observada, sin usarlos para sustituir la puntuación.",
+      ninguna: "No hubo anticipación o disponibilidad adulta: la situación pudo aumentar la dificultad. Considera el contexto antes de interpretar la intensidad y evita convertir el episodio en una característica estable.",
+      mixta: "Uno de los dos factores estuvo presente. Pondera cómo influyó el contexto antes de decidir tu puntuación final."
     },
-    criterios: "1 al 3 (Intensidad baja): reacciona de manera suave y contenida.\n4 al 7 (Intensidad media): hay molestia evidente, pero no llega al desborde físico ni supera los 5-10 minutos.\n8 al 10 (Intensidad alta): escalada rápida (0 a 100), descarga física corporal y duración mayor a 10 minutos.",
+    criterios: "1 al 3 (Baja): reacción leve o fácilmente manejable en esa situación.\n4 al 7 (Media): reacción claramente perceptible que requiere acompañamiento, pero puede recuperar la calma con apoyos habituales.\n8 al 10 (Alta): reacción muy intensa, desbordante o difícil de acompañar en ese momento. La duración no determina esta banda; tampoco una forma específica de expresar la emoción.",
     accion: [
       "Validar",
-      "Expresar",
-      "Contener"
+      "Acompañar",
+      "Regular"
     ],
     situacionesPorEtapa: {
       toddler: [
@@ -342,35 +411,42 @@ const RASGOS = [
     id: 2,
     nombre: "Nivel de actividad",
     corto: "Actividad",
-    eje: "Actividad alta",
+    descripcionCorta: "¿Cuánto movimiento hubo?",
+    eje: "Movimiento observado",
     tipo: "num",
-    unidad: "minutos",
+    unidad: "minutos de movimiento observado",
     umbral: [
       20,
       60
     ],
-    situacionLabel: "Actividad ofrecida o contexto",
-    datoLabel: "Tiempo de movimiento intenso (minutos)",
+    info: {
+      observamos: "La cantidad y frecuencia de movimiento que busca o realiza el niño o la niña, en relación con las oportunidades reales de movimiento que ofrecía la situación (espacio, actividad, cansancio, necesidad de permanecer quieto).",
+      pregunta: "Si el espacio permitía moverse, si la actividad requería estar quieto, cuánto tiempo llevaba sin moverse y si estaba cansado o descansado.",
+      noConcluyas: "Que buscar movimiento con frecuencia significa por sí mismo un problema de conducta o una condición clínica. No comparamos con otros niños ni tratamos una cantidad de movimiento como “normal” o “anormal”.",
+      proposito: "Identificar qué combinación de movimiento, calma y condiciones del entorno favorece su participación y bienestar."
+    },
+    situacionLabel: "Situación o actividad observada",
+    datoLabel: "Tiempo aproximado de movimiento observado (minutos)",
     situaciones: [
-      "Tiempo de juego libre en casa",
-      "Ida al parque o patio",
-      "Trayecto en coche o transporte",
-      "Tiempo de espera (fila, sala de espera)",
-      "Ver una película o programa",
-      "Reunión familiar o social",
+      "Juego libre",
+      "Actividad sentada",
+      "Tiempo de espera",
+      "Traslado o trayecto",
+      "Actividad escolar o de aprendizaje",
+      "Reunión o convivencia",
       "Antes de dormir",
-      "Hora de la comida"
+      "Comida"
     ],
     q1: {
-      t: "¿El espacio ofrecía amplitud para moverse, o era reducido?",
+      t: "¿La situación permitía moverse libremente o pedía permanecer en un mismo lugar?",
       o: [
-        "Espacio amplio",
-        "Espacio reducido"
+        "Permitía movimiento",
+        "Pedía permanecer en un lugar"
       ],
-      ok: "Espacio amplio"
+      ok: "Permitía movimiento"
     },
     q2: {
-      t: "¿Había otros niños corriendo o jugando activamente cerca?",
+      t: "¿Había una oportunidad clara para alternar movimiento y calma?",
       o: [
         "Sí",
         "No"
@@ -378,69 +454,76 @@ const RASGOS = [
       ok: "Sí"
     },
     pauta: {
-      ambas: "El entorno invitaba al movimiento por sí mismo. El tiempo en movimiento probablemente refleja su nivel de actividad, pero con ayuda del contexto: confía en la banda con cautela.",
-      ninguna: "El movimiento ocurrió a pesar de un entorno que NO lo facilitaba y sin otros niños de referencia. Esto es una señal más fuerte de nivel de actividad genuino: considera mantener o incluso subir la banda sugerida.",
-      mixta: "El entorno solo explica en parte el movimiento observado. Usa tu criterio para matizar la banda sugerida."
+      ambas: "La situación permitía movimiento y también ofrecía oportunidades para alternarlo con momentos tranquilos. Interpreta el tiempo observado dentro de esas condiciones.",
+      ninguna: "La situación pedía permanecer en un mismo lugar y no ofrecía una oportunidad clara para alternar movimiento y calma. El contexto pudo limitar la expresión del movimiento; no lo interpretes como una característica fija.",
+      mixta: "Solo una de las condiciones estuvo presente. Considera qué exigía la situación y qué oportunidades reales de movimiento había antes de interpretar el registro."
     },
-    criterios: "1 al 3 (Nivel bajo): prefiere actividades sedentarias y calmadas.\n4 al 7 (Nivel medio): requiere juego activo moderado, pero transita fácilmente a actividades tranquilas.\n8 al 10 (Nivel alto): necesita movimiento constante para regular su sistema nervioso.",
+    criterios: "1 al 3 (Bajo en esa situación): poco movimiento observable durante la situación registrada.\\n4 al 7 (Intermedio): alterna momentos de movimiento y calma de acuerdo con las demandas de la situación.\\n8 al 10 (Alto en esa situación): movimiento frecuente o sostenido durante una situación que también requiere alternar con momentos de calma. El tiempo registrado no define por sí solo una necesidad ni una condición clínica.",
     accion: [
-      "Respetar",
-      "Balancear",
-      "Descargar"
+      "Ofrecer movimiento",
+      "Alternar",
+      "Ajustar el entorno"
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Viajes largos atascados en el tráfico mientras permanecen sujetos en la silla del auto (car seat).",
-        "Acompañar a los padres a realizar trámites bancarios prolongados o compras en el supermercado.",
-        "El momento de iniciar la rutina de ir a la cama cuando el cuerpo aún necesita saltar y correr.",
-        "Esperar sentado en la sala de estar o el pasillo mientras el adulto prepara la pañalera.",
-        "Participar pasivamente en reuniones de adultos o cenas familiares formales sin espacio para jugar."
+        "Juego libre con posibilidad de caminar, correr o explorar.",
+        "Esperar mientras una persona adulta termina una actividad.",
+        "Permanecer sentado durante una comida.",
+        "Alternar juego activo con momentos tranquilos antes de dormir.",
+        "Traslado en coche o transporte durante un periodo prolongado."
       ],
       preescolar: [
-        "Esperar a que sirvan la comida en un restaurante que no cuenta con áreas infantiles.",
-        "Permanecer sentado durante una actividad manual prolongada en el jardín infantil.",
-        "El tiempo de lectura ininterrumpida de un cuento largo justo antes de dormir.",
-        "Esperar de pie su turno para subir al resbalín en una plaza muy concurrida.",
-        "Estar en la sala de espera del pediatra o del dentista donde se exige silencio y quietud."
+        "Juego en un espacio amplio.",
+        "Actividad de mesa que requiere permanecer sentado.",
+        "Espera en una fila o sala.",
+        "Actividad de movimiento seguida de una actividad tranquila.",
+        "Convivencia familiar en un espacio con diferentes posibilidades de movimiento."
       ],
       escolar: [
-        "Hacer tareas escolares rutinarias sentado ininterrumpidamente frente a un escritorio.",
-        "Asistir a clases online, tutoriales o hacer investigaciones prolongadas frente a una pantalla.",
-        "Participar en asambleas, actos cívicos o ceremonias largas en el patio del colegio.",
-        "Compartir un espacio reducido (como un departamento pequeño) durante días de lluvia intensa.",
-        "La transición abrupta de una tarde de deporte o parque a la rutina de ducha, cena y cama."
+        "Actividad escolar que requiere permanecer sentado durante un periodo.",
+        "Trabajo individual alternado con actividades de movimiento.",
+        "Tiempo de espera o traslado.",
+        "Juego físico en patio o espacio abierto.",
+        "Actividad grupal que combina momentos de movimiento y calma."
       ]
     }
   },
   {
     id: 3,
     nombre: "Adaptabilidad",
-    corto: "Adaptabilidad",
-    eje: "Adaptabilidad lenta",
+    corto: "Cambios",
+    descripcionCorta: "¿Cómo respondió al cambio?",
+    eje: "Respuesta ante los cambios",
     tipo: "num",
     unidad: "minutos",
     umbral: [
       3,
       10
     ],
-    situacionLabel: "Transición solicitada (micro o macrocambio)",
-    datoLabel: "Tiempo de resistencia o transición (minutos)",
+    info: {
+      observamos: "Cómo responde el niño o la niña cuando una actividad, rutina, lugar, persona o situación cambia, sea un cambio pequeño o uno importante.",
+      pregunta: "Si el cambio fue anticipado, si comprendió qué iba a ocurrir, si era pequeño o importante, si estaba cansado y qué apoyo recibió.",
+      noConcluyas: "Que una dificultad ante un cambio significa por sí sola una baja capacidad de adaptación. A veces lo que necesita no es «adaptarse más rápido», sino anticipación, tiempo, apoyo visual o una transición gradual.",
+      proposito: "Descubrir qué tipos de cambios requieren mayor acompañamiento y qué formas de anticipación o apoyo facilitan las transiciones."
+    },
+    situacionLabel: "Cambio o transición que ocurrió",
+    datoLabel: "Tiempo aproximado para retomar o aceptar el cambio (minutos)",
     situaciones: [
-      "Dejar de jugar para bañarse o comer",
-      "Cambio de planes de última hora",
-      "Apagar la pantalla para dormir",
-      "Cambio de rutina por clima o imprevisto",
-      "Iniciar el día o salir de casa",
-      "Cambio de actividad en la escuela",
-      "Llegada de una persona o cuidador nuevo"
+      "Terminar una actividad para comenzar otra",
+      "Cambiar un plan familiar",
+      "Apagar una pantalla para continuar con otra actividad",
+      "Modificar una rutina por un imprevisto",
+      "Prepararse para salir de casa",
+      "Cambiar de actividad en la escuela",
+      "Encontrarse con una persona o cuidador diferente"
     ],
     q1: {
-      t: "¿Fue un micro-cambio (dentro de la misma actividad) o un macro-cambio (rutina completa, entorno nuevo)?",
+      t: "¿Qué tan grande fue el cambio para el niño o la niña?",
       o: [
-        "Micro-cambio",
-        "Macro-cambio"
+        "Pequeño o habitual",
+        "Importante o poco habitual"
       ],
-      ok: "Micro-cambio"
+      ok: "Pequeño o habitual"
     },
     q2: {
       t: "¿Anticipaste la transición con aviso previo (ej. «en 5 minutos nos vamos»)?",
@@ -455,40 +538,41 @@ const RASGOS = [
       ninguna: "Fue un cambio grande y sin aviso previo. Es esperable que cueste más, sin que eso signifique necesariamente baja adaptabilidad como rasgo estable. Considera un ajuste a la baja respecto a la banda sugerida.",
       mixta: "Uno de los dos factores agravó la dificultad. Pondera cuál pesó más antes de decidir tu puntuación final."
     },
-    criterios: "1 al 3 (Rápida): flexibilidad inmediata ante cambios (0 a 3 minutos).\n4 al 7 (Media): requiere anticipación, resistencia inicial pero se adapta (4 a 10 minutos).\n8 al 10 (Lenta): gran dificultad para dejar la actividad actual (más de 10 min de conflicto).",
+    criterios: "1 al 3 (Respuesta rápida): retoma o acepta el cambio en aproximadamente 0–3 minutos, considerando el tamaño y las condiciones del cambio.\n4 al 7 (Respuesta intermedia): necesita algunos minutos, apoyo o anticipación para retomar o aceptar el cambio.\n8 al 10 (Respuesta que requiere mayor acompañamiento): necesita más de 10 minutos o un apoyo adicional importante para retomar o aceptar el cambio. El tiempo es una referencia, no una definición de la capacidad del niño.",
     accion: [
-      "Fluir",
       "Anticipar",
-      "Estructurar"
+      "Acompañar",
+      "Dar tiempo"
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Cambiar de cuidador principal o de niñera de forma repentina un día de semana laboral.",
-        "La transición diaria de estar jugando placenteramente en la bañera a salir para vestirse.",
-        "Descubrir que su polera, camiseta o pijama favorito está lavándose y debe usar otra opción.",
-        "Tomar una ruta vehicular diferente para ir al jardín infantil debido a desvíos por el tráfico.",
-        "Interrumpir de forma súbita su juego de construcción porque la familia debe salir con prisa."
+        "Terminar el juego para bañarse, comer o salir.",
+        "Cambiar una actividad habitual por un imprevisto.",
+        "Usar una prenda u objeto diferente al que esperaba.",
+        "Cambiar de cuidador o encontrarse con una persona poco habitual.",
+        "Interrumpir un juego porque la familia necesita salir."
       ],
       preescolar: [
-        "Un cambio repentino de planes familiares el fin de semana por lluvia (ej. cancelar la ida al zoológico).",
-        "Llegar al colegio en la mañana y descubrir sorpresivamente que su maestro titular no está y hay un sustituto.",
-        "La transición abrupta de estar usando una pantalla interactiva (tablet/TV) a ir a sentarse a la mesa a cenar.",
-        "Recibir visitas inesperadas de familiares o amigos ruidosos en la tranquilidad de su casa.",
-        "Que el alimento servido en su plato se vea ligeramente diferente o que los ingredientes se mezclen inusualmente."
+        "Cancelar o modificar un plan familiar.",
+        "Encontrar un adulto diferente al habitual en la escuela.",
+        "Pasar de una actividad preferida a una rutina cotidiana.",
+        "Recibir una visita inesperada.",
+        "Cambiar una parte conocida de una rutina."
       ],
       escolar: [
-        "Empezar un nuevo año escolar enfrentando a compañeros nuevos y profesores con distintas metodologías.",
-        "Tener que abandonar un proyecto de robótica o juego de construcción a medias porque es hora de ir a dormir.",
-        "Sufrir cambios en la interfaz o reglas de su videojuego favorito tras una actualización automática del sistema.",
-        "Una mudanza de casa o, a menor escala, una redistribución unilateral de los muebles en su habitación.",
-        "Intentar dominar un deporte nuevo donde sus habilidades motrices previas no se transfieren fácilmente."
+        "Cambiar de actividad o plan escolar de manera inesperada.",
+        "Dejar una actividad interesante porque terminó el tiempo disponible.",
+        "Modificar una rutina familiar por un imprevisto.",
+        "Encontrarse con un cambio de horario o de persona responsable.",
+        "Adaptarse a una actividad nueva o a una forma diferente de realizar una actividad conocida."
       ]
     }
   },
   {
     id: 4,
     nombre: "Aproximación o retraimiento",
-    corto: "Aproximación",
+    corto: "Lo nuevo",
+    descripcionCorta: "¿Cómo se acercó a algo nuevo?",
     eje: "Retraimiento",
     tipo: "num",
     unidad: "minutos",
@@ -496,18 +580,24 @@ const RASGOS = [
       2,
       10
     ],
+    info: {
+      observamos: "Cómo se aproxima el niño o la niña a personas, lugares, actividades o situaciones que no conoce: rápido, observando primero, esperando, o necesitando acompañamiento.",
+      pregunta: "Si había alguien conocido cerca, si sabía qué iba a ocurrir, si se le permitió observar antes de participar y si fue presionado para acercarse.",
+      noConcluyas: "Que acercarse rápido sea «mejor» y acercarse lentamente sea «peor». Ser prudente, observar o necesitar tiempo no significa estar mal.",
+      proposito: "Identificar cómo suele aproximarse a lo desconocido y qué apoyos facilitan que participe con seguridad y confianza."
+    },
     situacionLabel: "Situación nueva (personas, lugares, comidas)",
     datoLabel: "Tiempo de latencia u observación (minutos)",
     situaciones: [
       "Conocer a una persona nueva",
-      "Entrar a un lugar desconocido",
-      "Probar una comida nueva",
-      "Primer día de una actividad o clase",
-      "Conocer a un animal",
-      "Fiesta o reunión con desconocidos"
+      "Llegar a un lugar poco conocido",
+      "Iniciar una actividad nueva",
+      "Participar en un juego con otros niños",
+      "Entrar a una reunión o convivencia",
+      "Acercarse a un objeto o experiencia desconocida"
     ],
     q1: {
-      t: "¿Había alguien conocido o de confianza presente y visible?",
+      t: "¿Había una persona conocida o de confianza cerca?",
       o: [
         "Sí",
         "No"
@@ -515,19 +605,19 @@ const RASGOS = [
       ok: "Sí"
     },
     q2: {
-      t: "¿Se acercó por elección propia o fue llevado a la situación?",
+      t: "¿Pudo observar o decidir cuándo acercarse, sin ser presionado?",
       o: [
-        "Elección propia",
-        "Fue presionado"
+        "Sí",
+        "No"
       ],
-      ok: "Elección propia"
+      ok: "Sí"
     },
     pauta: {
-      ambas: "Tenía apoyo conocido cerca y decidió por sí mismo. El tiempo de latencia observado refleja bien su patrón genuino de aproximación.",
-      ninguna: "Estaba sin apoyo conocido y fue empujado a la situación. Parte de la latencia pudo ser reacción a la presión, no solo temperamento. Considera un ajuste a la baja (menos retraimiento del que sugiere el tiempo).",
-      mixta: "Uno de los dos factores estuvo presente. Reflexiona cuál influyó más antes de fijar tu puntuación."
+      ambas: "Había una persona conocida y pudo acercarse a su propio ritmo. El tiempo observado puede servir como referencia para conocer su forma habitual de aproximarse a situaciones nuevas.",
+      ninguna: "No había una persona conocida y además hubo presión para acercarse. La demora o el rechazo pueden reflejar las condiciones de la situación; no los interpretes como una característica fija.",
+      mixta: "Solo una de las condiciones estuvo presente. Considera cuánto pudo influir la familiaridad, la seguridad y la posibilidad de decidir el momento de acercarse."
     },
-    criterios: "1 al 3 (Aproximación rápida): deseo inmediato de explorar (latencia casi nula).\n4 al 7 (Media): observa primero, se integra tras unos minutos de aclimatación.\n8 al 10 (Retraimiento): observa desde lejos y se refugia en el adulto por más de 10 minutos.",
+    criterios: "1 al 3 (Acercamiento rápido): participa o se aproxima en poco tiempo en la situación observada. Esto no significa que sea mejor ni más adecuado.\\n4 al 7 (Acercamiento gradual): necesita observar, esperar o recibir alguna información antes de participar.\\n8 al 10 (Necesita más tiempo o apoyo): tarda más en acercarse, decide no participar por el momento o requiere mayor acompañamiento. La velocidad de acercamiento no es un indicador de valor, madurez o capacidad social.",
     accion: [
       "Límites seguros",
       "Permitir observar",
@@ -535,32 +625,33 @@ const RASGOS = [
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Llegar a un cumpleaños infantil donde la música está muy alta y hay un flujo constante de desconocidos.",
-        "Un familiar que no ven a menudo se acerca de manera sorpresiva y rápida para darles un beso o abrazo.",
-        "Intentar convencerlo de probar un alimento con una textura, olor o sabor completamente nuevo para él.",
-        "Estrenar un par de zapatos nuevos que alteran su percepción usual de la caminata.",
-        "Entrar por primera vez a un área de juegos cerrada (playroom) atestada de niños mayores en un centro comercial."
+        "Conocer a una persona que no ve habitualmente.",
+        "Llegar a un lugar poco conocido.",
+        "Encontrar un juguete, espacio u objeto nuevo.",
+        "Participar cerca de otros niños.",
+        "Iniciar una actividad que no conoce."
       ],
       preescolar: [
-        "Asistir con expectativas a la primera clase de natación, ballet o de un deporte desconocido.",
-        "Enfrentar la situación donde un compañero de juegos nuevo y extravertido quiere integrarse repentinamente a su dinámica.",
-        "Saludar por cortesía a los amigos adultos de sus padres al llegar a una reunión social en casa.",
-        "Participar obligatoriamente en una dinámica de canto grupal o baile dirigida por un animador de fiestas.",
-        "Conocer al pediatra de reemplazo o a un dentista nuevo en la frialdad del consultorio."
+        "Conocer a una persona adulta nueva.",
+        "Llegar a un lugar nuevo con un adulto de confianza.",
+        "Integrarse a un juego que ya comenzó.",
+        "Probar una actividad desconocida.",
+        "Participar en una convivencia con personas poco conocidas."
       ],
       escolar: [
-        "Enfrentarse sin guía a una mecánica nueva y difícil en un videojuego que no posee un tutorial claro.",
-        "Caminar solo el primer día hacia un taller extraescolar donde no conoce absolutamente a nadie.",
-        "Ponerse de pie para exponer un trabajo frente a la clase o encender la cámara en un nuevo ciclo de clases virtuales.",
-        "Ir a dormir a la casa de un amigo por primera vez (sleepover), enfrentando rutinas ajenas.",
-        "Que lo inviten de manera efusiva a participar en un juego de equipo en el recreo con niños de grados superiores."
+        "Integrarse a un grupo o actividad nueva.",
+        "Conocer a una persona nueva en la escuela.",
+        "Participar en un espacio o situación poco conocida.",
+        "Iniciar una actividad que requiere una forma diferente de participación.",
+        "Acercarse a compañeros con los que todavía no tiene confianza."
       ]
     }
   },
   {
     id: 5,
     nombre: "Estado de ánimo predominante",
-    corto: "Ánimo",
+    corto: "Expresión",
+    descripcionCorta: "¿Cómo mostró o comunicó lo que vivía?",
     eje: "Foco analítico",
     tipo: "cat",
     unidad: "",
@@ -578,39 +669,50 @@ const RASGOS = [
         3
       ]
     ],
+    info: {
+      observamos: "Qué aspectos de una situación llaman especialmente la atención del niño o la niña, y cómo expresa lo que está viviendo (con palabras, gestos o cambios de conducta).",
+      pregunta: "Qué fue lo primero que llamó su atención, si la situación era nueva, si había una expectativa previa y si su reacción fue aislada o se repite. «No estoy seguro/a» es una respuesta válida.",
+      noConcluyas: "Que detectar rápidamente un problema o un detalle signifique un «estado de ánimo negativo», ni que enfocarse en lo agradable signifique ignorar las dificultades. No usamos este rasgo para clasificar a un niño como positivo, negativo o quejumbroso.",
+      proposito: "Conocer qué aspectos de las situaciones suelen captar su atención y cómo ayudarle a ampliar su manera de observar y responder."
+    },
     situacionLabel: "Situación",
     datoLabel: "Enfoque predominante",
     extraLabel: "Comentario o reacción del niño/a",
     situaciones: [
-      "Recibió un regalo o sorpresa",
-      "Actividad recreativa (parque, juego)",
-      "Terminó una tarea o proyecto",
-      "Comió algo especial",
-      "Un evento no salió perfecto",
-      "Recibió un elogio o reconocimiento"
+      "Recibir una noticia o información inesperada",
+      "Encontrarse con un cambio en un plan",
+      "Resolver una dificultad",
+      "Recibir una corrección o comentario",
+      "Participar en una actividad que le interesa",
+      "Participar en una actividad que no eligió",
+      "Hablar sobre algo que le preocupa o le entusiasma"
     ],
     q1: {
-      t: "¿El comentario fue una observación neutra y curiosa, o una queja?",
+      t: "¿La situación era agradable, difícil, inesperada o poco conocida para el niño o la niña?",
       o: [
-        "Observación neutra",
-        "Queja o molestia"
+        "Agradable o de interés",
+        "Difícil o frustrante",
+        "Inesperada",
+        "Poco conocida"
       ],
-      ok: "Observación neutra"
+      ok: "Agradable o de interés"
     },
     q2: {
-      t: "¿Tú hiciste un comentario analítico o crítico justo antes, que pudo estar imitando?",
+      t: "¿Qué expresó o hizo que te permitió identificar cómo estaba viviendo la situación?",
       o: [
-        "No",
-        "Sí"
+        "Lo dijo con palabras",
+        "Lo mostró con gestos o expresión corporal",
+        "Cambió su conducta o participación",
+        "No estoy seguro/a"
       ],
-      ok: "No"
+      ok: "Lo dijo con palabras"
     },
     pauta: {
-      ambas: "El comentario fue espontáneo y neutro, sin que tú lo modelaras antes. Es una buena muestra del enfoque predominante genuino del niño/a.",
-      ninguna: "El comentario tuvo tono de molestia y viene después de que tú mismo/a comentaste algo similar. Puede ser imitación puntual más que un rasgo estable. Considera no sobre-pesar este episodio.",
-      mixta: "Revisa si el tono era realmente neutro y si el modelamiento previo pudo influir, antes de decidir."
+      ambas: "La situación y la forma de expresión observada ofrecen información útil sobre cómo vivió ese momento. Describe lo ocurrido sin convertirlo en una característica general del niño o la niña.",
+      ninguna: "La situación no permite interpretar con seguridad cómo estaba viviendo el momento. Registra solo lo que observaste y evita inferir un estado interno.",
+      mixta: "Hay información parcial. Distingue lo que el niño expresó de lo que tú interpretaste y conserva la incertidumbre cuando no sea posible saberlo."
     },
-    criterios: "1 al 3 (Foco en disfrute): se enfoca en lo agradable y positivo de la situación.\n4 al 7 (Equilibrado): disfruta, pero ocasionalmente observa cosas imperfectas.\n8 al 10 (Foco analítico): nota automáticamente lo que falta o lo discordante.",
+    criterios: "1 al 3 (Expresión o valoración leve): muestra cambios pequeños o poco intensos en su expresión, participación o valoración de la situación.\\n4 al 7 (Expresión o valoración moderada): comunica o muestra de manera clara cómo está viviendo la situación, con cambios perceptibles en su expresión o participación.\\n8 al 10 (Expresión o valoración intensa): comunica o muestra una vivencia muy intensa de la situación, con cambios marcados en su expresión o participación. La puntuación no significa “ánimo malo” o “ánimo bueno” y no permite diagnosticar un estado emocional.",
     accion: [
       "Acompañar",
       "Balancear",
@@ -618,32 +720,33 @@ const RASGOS = [
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Despertar en la mañana sistemáticamente con llanto, quejas o irritabilidad en lugar de sonrisas y balbuceos.",
-        "Terminar de armar un rompecabezas complejo y enojarse amargamente porque la última pieza está un poco desgastada.",
-        "Recibir un premio o regalo sorpresivo y concentrarse ceñudamente en abrir la caja en lugar de celebrar el contenido.",
-        "Estar en un parque de diversiones espectacular y mantener un rostro serio e inexpresivo observando cómo funciona la maquinaria.",
-        "Mancharse ligeramente la manga con pintura y enfocarse solo en la mancha en lugar de disfrutar el proceso del arte."
+        "Mostrar interés o rechazo ante una actividad.",
+        "Responder a una sorpresa o cambio sencillo.",
+        "Reaccionar ante una dificultad durante el juego.",
+        "Expresar agrado o molestia durante una rutina.",
+        "Mostrar cómo vive una situación mediante gestos, movimientos o palabras."
       ],
       preescolar: [
-        "Recibir un regalo de cumpleaños anhelado que no era exactamente el modelo de color o tamaño que esperaba su mente rígida.",
-        "Terminar un dibujo muy elaborado y frustrarse profundamente hasta llorar porque un trazo final salió desviado.",
-        "Días lluviosos o nublados que parecen predisponer automáticamente un estado de ánimo quejumbroso y apático en el hogar.",
-        "Durante los juegos de mesa en familia, enfocar toda su energía en auditar si alguien hace trampa o incumple una mínima regla.",
-        "Que se le sirva su plato favorito en la cena, pero estallar en quejas porque el acompañamiento tocó el alimento principal."
+        "Contar cómo se sintió ante una situación cotidiana.",
+        "Responder a una corrección o límite.",
+        "Resolver una dificultad durante un juego.",
+        "Participar en una actividad que eligió o que no eligió.",
+        "Expresar entusiasmo, preocupación, molestia o tranquilidad ante un acontecimiento."
       ],
       escolar: [
-        "Revisar un examen escolar excelente y fijarse únicamente y con angustia en el medio punto restado, ignorando la nota alta general.",
-        "Salir a unas vacaciones esperadas y quejarse prolongadamente de la incomodidad del viaje largo en lugar de entusiasmarse por el destino.",
-        "Ganar un partido deportivo importante, pero sumirse en una autocrítica severa y rumiante por un pase fallido en el primer tiempo.",
-        "Organizar una junta con sus mejores amigos y angustiarse por los detalles mínimos de logística o de lo que comerán.",
-        "Mirarse al espejo antes de salir a un evento y enfocarse destructivamente en un detalle imperceptible de su ropa o peinado."
+        "Recibir una corrección o comentario sobre su trabajo.",
+        "Resolver una dificultad académica o social.",
+        "Participar en una actividad elegida o no elegida.",
+        "Recibir una noticia o cambio inesperado.",
+        "Expresar cómo vivió una situación escolar o familiar."
       ]
     }
   },
   {
     id: 6,
     nombre: "Regularidad (ritmos biológicos)",
-    corto: "Regularidad",
+    corto: "Rutinas",
+    descripcionCorta: "¿Cómo fue su ritmo habitual hoy?",
     eje: "Irregularidad",
     tipo: "horas",
     unidad: "minutos de desviación",
@@ -651,71 +754,85 @@ const RASGOS = [
       14,
       45
     ],
+    info: {
+      observamos: "Qué tan constantes o variables son algunos ritmos cotidianos: sueño, alimentación, siestas, despertar o necesidades de ir al baño.",
+      pregunta: "Si la variación ocurrió una sola vez o se repite, si hubo algo diferente ese día (visita, viaje, enfermedad, cansancio) y si el niño tuvo suficiente descanso.",
+      noConcluyas: "Que una rutina irregular signifique que el niño está haciendo algo mal, ni que la familia deba imponer horarios rígidos. Distinguimos un cambio aislado de un patrón que se repite.",
+      proposito: "Identificar qué rutinas favorecen el bienestar del niño o niña, construyendo rutinas predecibles pero flexibles en lugar de horarios rígidos."
+    },
     situacionLabel: "Función biológica",
     datoLabel: "Desviación respecto a la hora esperada",
     situaciones: [
       "Hora de dormir",
-      "Hora de comida o hambre",
-      "Necesidad de ir al baño",
-      "Siesta",
-      "Hora de despertar"
+      "Hora de despertar",
+      "Comida",
+      "Salida de casa",
+      "Regreso a casa",
+      "Uso del baño",
+      "Momento de descanso",
+      "Inicio de una actividad cotidiana"
     ],
     q1: {
-      t: "¿Hubo algo ese día que alterara la rutina (viaje, visita, enfermedad, evento)?",
+      t: "¿La rutina tuvo condiciones diferentes a las habituales?",
       o: [
         "No",
-        "Sí"
+        "Sí, hubo un cambio pequeño",
+        "Sí, hubo un cambio importante"
       ],
       ok: "No"
     },
     q2: {
-      t: "¿Este patrón se repite varias veces en la semana, o fue un caso aislado?",
+      t: "¿Hubo alguna circunstancia que pudiera influir en el ritmo de ese día?",
       o: [
-        "Se repite",
-        "Caso aislado"
+        "No identifico ninguna",
+        "Cansancio, hambre o malestar",
+        "Cambio de actividad, lugar o persona",
+        "Viaje, visita, celebración o acontecimiento especial",
+        "Otra circunstancia"
       ],
-      ok: "Se repite"
+      ok: "No identifico ninguna"
     },
     pauta: {
-      ambas: "No hubo una causa externa clara y el patrón se repite. Esto apunta a una irregularidad genuina del rasgo: confía en la banda sugerida.",
-      ninguna: "Hubo un evento que alteró la rutina y fue un caso aislado. Es probable que esta desviación sea circunstancial, no representativa del rasgo estable. Considera no pesarla tanto en tu promedio.",
-      mixta: "Pondera si la causa externa realmente explica toda la desviación, o si una parte seguiría ocurriendo de todos modos."
+      ambas: "La rutina se desarrolló en condiciones parecidas a las habituales y no identificaste una circunstancia especial. La variación observada puede ser una pista para seguir observando el ritmo.",
+      ninguna: "Hubo cambios importantes o circunstancias que pudieron modificar el ritmo. No atribuyas la variación a una característica estable del niño o la niña.",
+      mixta: "Hubo alguna condición diferente. Considera cuánto pudo influir antes de interpretar la variación registrada."
     },
-    criterios: "1 al 3 (Muy regular): sus necesidades ocurren casi a la misma hora (desviación menor a 15 min).\n4 al 7 (Media): variaciones normales dentro de un patrón predecible (15 a 45 min).\n8 al 10 (Irregular): patrones muy fluctuantes que cambian día a día (más de 45 min).",
+    criterios: "1 al 3 (Variación pequeña): el ritmo observado se mantiene cercano al habitual en esa situación.\\n4 al 7 (Variación intermedia): existe una diferencia perceptible respecto al ritmo habitual y conviene observar si se repite.\\n8 al 10 (Variación importante): existe una diferencia amplia respecto al ritmo habitual o una dificultad marcada para sostener la rutina en esa ocasión. Una variación no significa que la rutina familiar esté mal ni que exista un problema en el niño o la niña.",
     accion: [
       "Respetar",
       "Mantener",
-      "Imponer estructura"
+      "Ofrecer estructura y anticipación"
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Rechazar enfáticamente el almuerzo a la hora familiar establecida, pero pedir comida desesperadamente una hora después.",
-        "Mostrar una incapacidad crónica para mantener una hora de siesta constante; algunos días duerme tres horas, otros se niega.",
-        "Evacuaciones intestinales totalmente impredecibles, a menudo ocurriendo en el momento exacto en que la familia sale de casa.",
-        "Despertar con energía inagotable a las 4:00 AM algunos días y otros días presentar letargo y dormir hasta muy tarde.",
-        "Presentar una fatiga súbita e incapacitante en medio de una actividad lúdica que el día anterior toleró maravillosamente bien."
+        "Prepararse para dormir.",
+        "Despertar y comenzar el día.",
+        "Pasar de una actividad a la comida.",
+        "Salir de casa.",
+        "Alternar juego, descanso y actividades cotidianas."
       ],
       preescolar: [
-        "Imposibilidad física de conciliar el sueño al estar en la cama, a pesar de seguir una rutina estricta y predecible de apagado de luces.",
-        "Sentir un \"bajón\" abrupto de energía metabólica y ponerse profundamente irritable a diferentes horas impredecibles de la tarde.",
-        "Iniciar huelgas de hambre o llanto desconsolado si las comidas se retrasan apenas unos minutos respecto a su reloj interno del día.",
-        "Experimentar picos intensos de hiperactividad motora o verborrea nocturna justo en el momento en que se espera que se duerma.",
-        "Necesidad urgente e impostergable de ir al baño en medio del tráfico vehicular denso o en lugares públicos inconvenientes."
+        "Mantener una rutina de sueño.",
+        "Cambiar una parte de la rutina por un imprevisto.",
+        "Organizar los momentos de comida y descanso.",
+        "Prepararse para salir o regresar a casa.",
+        "Iniciar una actividad cotidiana después de un periodo de juego."
       ],
       escolar: [
-        "Dificultad extrema y conflictiva para lograr despertar para ir al colegio algunos días, mientras que otros días despierta espontáneamente.",
-        "Requerir ingerir colaciones fuera de la norma escolar porque el rígido horario de almuerzo del recreo no coincide con sus señales de hambre.",
-        "Exhibir un cansancio desproporcionado y paralizante tras la jornada del colegio que interfiere erráticamente con las actividades extraprogramáticas.",
-        "Padecer insomnio de conciliación severo cuando los horarios se relajan o cambian mínimamente por vacaciones, festivos o fines de semana.",
-        "Quejarse de una sensación genuina de náusea o malestar estomacal producto de la imposición parental de ingerir un desayuno abundante muy temprano."
+        "Organizar sueño y despertar alrededor del horario escolar.",
+        "Mantener rutinas de alimentación y descanso.",
+        "Prepararse para salir de casa a una hora determinada.",
+        "Adaptar la rutina familiar durante vacaciones o cambios de horario.",
+        "Retomar una rutina después de una ausencia, enfermedad o acontecimiento especial."
       ]
     }
   },
   {
     id: 7,
     nombre: "Sensibilidad a la estimulación",
-    corto: "Sensibilidad",
-    eje: "Sensibilidad alta",
+    corto: "Estímulos",
+    descripcionCorta: "¿Cómo respondió a lo que había alrededor?",
+    eje: "Respuesta a los estímulos del entorno",
     tipo: "cat",
     unidad: "",
     opciones: [
@@ -736,38 +853,46 @@ const RASGOS = [
         3
       ]
     ],
+    info: {
+      observamos: "Cómo responde el niño o la niña ante estímulos físicos (ruido, luz, temperatura, texturas, olores, aglomeraciones) o ante el ambiente social (tensión, voces fuertes, cambios emocionales de personas cercanas).",
+      pregunta: "Qué estímulo estaba presente, si era intenso o inesperado, si había varios estímulos a la vez, si el niño estaba cansado y si tuvo oportunidad de retirarse o descansar.",
+      noConcluyas: "Que una sensibilidad elevada ante determinado estímulo constituya por sí misma un diagnóstico o un problema.",
+      proposito: "Identificar qué características del ambiente facilitan o dificultan la participación y qué ajustes hacen el entorno más cómodo y accesible."
+    },
     situacionLabel: "Estímulo del entorno (sensorial o emocional)",
     datoLabel: "Intensidad de la reacción",
     situaciones: [
-      "Ruido fuerte o inesperado",
-      "Textura de ropa o etiquetas",
-      "Luz brillante",
-      "Cambio de clima (calor/frío)",
-      "Notar el estado de ánimo de un adulto",
-      "Aglomeración de gente"
+      "Ruido intenso o inesperado",
+      "Luz intensa o cambio de iluminación",
+      "Temperatura, frío o calor",
+      "Textura o sensación corporal",
+      "Olor intenso",
+      "Espacio lleno de personas o poco espacio",
+      "Contacto físico no esperado",
+      "Combinación de varios estímulos del entorno"
     ],
     q1: {
-      t: "¿Había estimulación acumulada previa ese día (ruido, gente, actividades)?",
+      t: "¿El estímulo era esperado o inesperado?",
       o: [
-        "No",
-        "Sí"
+        "Esperado",
+        "Inesperado"
       ],
-      ok: "No"
+      ok: "Esperado"
     },
     q2: {
-      t: "¿Estaba cansado/a o con sueño en ese momento?",
+      t: "¿Había posibilidad de alejarse, descansar o reducir el estímulo?",
       o: [
-        "No",
-        "Sí"
+        "Sí",
+        "No"
       ],
-      ok: "No"
+      ok: "Sí"
     },
     pauta: {
-      ambas: "Fue un estímulo aislado en un momento de descanso y calma. La reacción observada refleja bien su sensibilidad genuina.",
-      ninguna: "Llegó a este estímulo ya saturado y cansado. Parte de la reacción puede deberse a la acumulación del día, no solo al estímulo puntual. Considera un ajuste a la baja.",
-      mixta: "Uno de los dos factores (acumulación o cansancio) pudo amplificar la reacción. Ajusta con ese matiz en mente."
+      ambas: "El estímulo era conocido y había posibilidad de reducirlo o tomar distancia. Interpreta la intensidad observada junto con esas condiciones.",
+      ninguna: "El estímulo fue inesperado y no hubo una posibilidad clara de reducirlo o tomar distancia. Las condiciones pudieron aumentar la respuesta; no la conviertas en una característica fija.",
+      mixta: "Solo una de las condiciones estuvo presente. Considera la novedad del estímulo y las posibilidades reales de recuperación antes de interpretar la respuesta."
     },
-    criterios: "1 al 3 (Baja): no se abruma con estímulos del entorno ni reacciona al estrés de otros.\n4 al 7 (Media): reacciona ante estímulos evidentes, pero los tolera si se le anticipa.\n8 al 10 (Alta): se abruma con facilidad, o capta de inmediato la tensión del adulto.",
+    criterios: "1 al 3 (Respuesta leve): el estímulo produce una reacción pequeña o fácilmente manejable en esa situación.\\n4 al 7 (Respuesta moderada): el estímulo produce una reacción clara que requiere algún ajuste o acompañamiento.\\n8 al 10 (Respuesta intensa): el estímulo produce una reacción marcada o difícil de acompañar en ese momento. La puntuación describe la respuesta observada ante ese estímulo; no diagnostica una sensibilidad ni define al niño o la niña.",
     accion: [
       "Verificar",
       "Monitorear",
@@ -775,32 +900,33 @@ const RASGOS = [
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Rechazar violentamente calcetines que tengan costuras frontales o llorar incontrolablemente por la etiqueta de la ropa.",
-        "Experimentar auténtico terror y evitación ante el estruendo de los secadores de manos automáticos en los baños públicos.",
-        "Angustia aguda y desesperación por tener las manos ligeramente pegajosas después de jugar con plastilina, barro o comer.",
-        "Negarse categóricamente y con llanto a caminar sobre pasto sin zapatos protectores o a tocar la textura de la arena en la playa.",
-        "Taparse los oídos instintivamente y encogerse cuando pasa una motocicleta cerca o cuando suena la licuadora dentro de casa."
+        "Ruido intenso durante una convivencia.",
+        "Cambio de luz o iluminación.",
+        "Contacto físico inesperado.",
+        "Olor o textura que resulta difícil de tolerar.",
+        "Espacio lleno de personas."
       ],
       preescolar: [
-        "Abrumarse y desregularse bajo las luces fluorescentes intensas y parpadeantes de un centro comercial o pasillo de supermercado.",
-        "Llorar con angustia o mostrar arcadas/náuseas ante el olor penetrante de ciertos alimentos (pescado, brócoli) al cocinarse en casa.",
-        "Incomodidad extrema y lucha física defensiva al momento de someterse al corte de uñas, corte de pelo o al lavado de cabeza.",
-        "Sobrecarga sensorial paralizante en fiestas infantiles típicas donde hay música estridente, animadores gritando, luces y voces superpuestas.",
-        "Preferencia obsesiva por usar ropa muy holgada de algodón y negarse rotundamente a llevar abrigos pesados, rígidos o prendas ceñidas."
+        "Ruido intenso en un espacio con muchas personas.",
+        "Actividad con diferentes sonidos, luces u olores.",
+        "Contacto físico inesperado durante un juego.",
+        "Temperatura o ropa que resulta incómoda.",
+        "Permanecer en un espacio donde no puede alejarse fácilmente del estímulo."
       ],
       escolar: [
-        "Distraerse constantemente o irritarse hasta la rabia por el micro-roce del lápiz grafito sobre el papel o el chirrido de las tizas en la pizarra.",
-        "Rechazar visceralmente texturas específicas en la boca al comer (como el puré con pequeños grumos, gelatinas o frutas que están muy maduras).",
-        "Molestia crónica y distracción originada por la costura áspera del cuello del uniforme escolar o los elásticos de los pantalones.",
-        "Padecer dolor de cabeza real (cefalea tensional) luego de haber estado varias horas confinado en un salón de clases muy ruidoso y aglomerado.",
-        "Reacción exagerada de sobresalto defensivo ante abrazos sorpresivos por la espalda o toques demasiado ligeros de compañeros en el bullicio del recreo."
+        "Ruido intenso durante una actividad escolar.",
+        "Espacio con mucha gente o estímulos simultáneos.",
+        "Iluminación, temperatura u olor que resultan incómodos.",
+        "Contacto físico inesperado.",
+        "Actividad en la que se acumulan varios estímulos del entorno."
       ]
     }
   },
   {
     id: 8,
     nombre: "Distractibilidad (perceptibilidad)",
-    corto: "Distractibilidad",
+    corto: "Atención",
+    descripcionCorta: "¿Cómo mantuvo o retomó la actividad?",
     eje: "Distractibilidad",
     tipo: "num",
     unidad: "interrupciones en 15 min",
@@ -808,37 +934,48 @@ const RASGOS = [
       1,
       4
     ],
+    info: {
+      observamos: "Cuánto tiempo permanece en una actividad y cómo consigue retomarla cuando se interrumpe, en relación con la claridad de la tarea, su dificultad y los estímulos presentes.",
+      pregunta: "Si la actividad estaba clara y era adecuada para lo que podía hacer en ese momento, y si hubo interrupciones, estímulos u otras demandas que pudieron afectar la continuidad.",
+      noConcluyas: "Que responder a los estímulos del entorno signifique automáticamente que «no puede concentrarse». La atención depende también de la actividad, el ambiente, la motivación, el cansancio y los apoyos disponibles.",
+      proposito: "Identificar qué condiciones ayudan a permanecer o retomar la participación en una actividad."
+    },
     situacionLabel: "Tarea principal o actividad",
     datoLabel: "Interrupciones observadas en 15 minutos",
     situaciones: [
-      "Hacer tarea escolar",
-      "Comer",
-      "Escuchar instrucciones",
-      "Jugar con juguetes",
-      "Escuchar un cuento"
+      "Actividad escolar",
+      "Lectura o escucha de una historia",
+      "Juego con reglas",
+      "Actividad manual o creativa",
+      "Conversación",
+      "Tarea cotidiana con varios pasos",
+      "Actividad que eligió",
+      "Actividad que no eligió"
     ],
     q1: {
-      t: "¿La tarea le interesaba genuinamente o se la impusiste tú?",
+      t: "¿La actividad estaba clara y era adecuada para lo que podía hacer en ese momento?",
       o: [
-        "Interés genuino",
-        "Se la impusiste"
+        "Sí",
+        "No estoy seguro/a",
+        "No"
       ],
-      ok: "Interés genuino"
+      ok: "Sí"
     },
     q2: {
-      t: "¿Había estímulos nuevos o inusuales en el entorno?",
+      t: "¿Hubo interrupciones, estímulos u otras demandas que pudieron afectar la continuidad?",
       o: [
-        "No, los de siempre",
-        "Sí, algo nuevo"
+        "No identifiqué ninguna",
+        "Sí, hubo interrupciones o estímulos",
+        "Sí, hubo otra demanda o dificultad"
       ],
-      ok: "No, los de siempre"
+      ok: "No identifiqué ninguna"
     },
     pauta: {
-      ambas: "Le interesaba la tarea y el entorno era el de todos los días. Las interrupciones observadas reflejan bien su perceptibilidad genuina.",
-      ninguna: "No era una tarea de su interés y además había algo nuevo llamando su atención. Parte de la distracción puede ser desinterés o novedad puntual, no solo el rasgo. Considera un ajuste a la baja.",
-      mixta: "Revisa si pesó más el desinterés o la novedad del entorno antes de decidir tu puntuación."
+      ambas: "La actividad era clara y no identificaste interrupciones relevantes. El tiempo de continuidad puede aportar información útil sobre esa actividad concreta.",
+      ninguna: "La actividad no estaba clara o hubo interrupciones/demandas relevantes. La dificultad para continuar puede deberse al contexto o a la tarea; no la conviertas en una característica fija.",
+      mixta: "Solo una de las condiciones estuvo presente. Considera la claridad de la actividad, su dificultad y las interrupciones antes de interpretar el tiempo observado."
     },
-    criterios: "1 al 3 (Hiperfoco): se aísla por completo en su tarea (0-1 interrupciones en 15 min).\n4 al 7 (Media): voltea a mirar, pero retoma fácilmente (2-4 interrupciones).\n8 al 10 (Alta): cualquier estímulo secundario lo saca de su tarea (5 o más).",
+    criterios: "1 al 3 (Continuidad breve): permanece en la actividad durante un periodo corto en esa situación o requiere recordatorios frecuentes para retomarla.\\n4 al 7 (Continuidad intermedia): mantiene la actividad durante un periodo significativo y puede retomarla con algunos apoyos o recordatorios.\\n8 al 10 (Continuidad prolongada): mantiene o retoma la actividad durante un periodo prolongado con pocos recordatorios. El tiempo no mide inteligencia, interés, obediencia ni capacidad general de atención.",
     accion: [
       "Contactar antes de hablar",
       "Redirigir",
@@ -846,71 +983,81 @@ const RASGOS = [
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Enviar al niño a su cuarto a buscar sus zapatos y, a los cinco minutos, encontrarlo distraído jugando con el perro en el pasillo.",
-        "Pausar mecánicamente la ingesta de comida cada vez que cualquier persona o mascota entra o sale del área del comedor.",
-        "Olvidar inmediatamente la actividad inmersiva que estaba haciendo solo porque un juguete emitió un sonido en una habitación adyacente.",
-        "Intentar vestirse por la mañana presionado por el tiempo y detenerse como hipnotizado, con un calcetín a medio poner, para mirar intensamente las páginas de un libro.",
-        "Distraerse peligrosamente al momento de cruzar la calle, soltando la mano del cuidador por el sonido lejano de un camión o el vuelo de un pájaro."
+        "Escuchar una historia breve.",
+        "Realizar un juego sencillo.",
+        "Completar una actividad manual.",
+        "Participar en una rutina con varios pasos.",
+        "Jugar libremente con un objeto o material."
       ],
       preescolar: [
-        "Darle instrucciones encadenadas de tres pasos (\"lávate las manos, ponte el pijama y ven al sofá\") y observar que con suerte logra cumplir el primero y olvida los demás.",
-        "Estar en la rutina esencial de lavarse los dientes y terminar profundamente concentrado jugando con el flujo del agua del grifo, ignorando el cepillo.",
-        "Caminar apresuradamente hacia el auto en la mañana escolar y detenerse repetidamente a investigar con fascinación cada hoja o insecto en el suelo del antejardín.",
-        "Perder de manera abrupta el hilo conductor de una historia fascinante o de una tarea del jardín infantil porque percibió música sonando a lo lejos en otra casa.",
-        "Dejar un set de juguetes o legos desordenados a la mitad de su construcción para saltar a iniciar una actividad lúdica completamente diferente."
+        "Escuchar o participar en una historia.",
+        "Realizar una actividad manual o artística.",
+        "Participar en un juego con reglas.",
+        "Seguir una rutina con varios pasos.",
+        "Completar una actividad elegida o propuesta por un adulto."
       ],
       escolar: [
-        "Perder drásticamente la frágil concentración en la tarea escolar o de lectura porque le llegó una notificación luminosa o sonora en la tablet o teléfono.",
-        "Olvidar por completo entregar una circular urgente y firmada al profesor titular al llegar al aula, simplemente por detenerse un segundo a saludar a un amigo en la puerta.",
-        "Perder en un momento crítico de un videojuego que requería foco, simplemente por girar a mirar el chat de voz de sus amigos en lugar de mantener la vista en la pantalla principal.",
-        "Iniciar la tarea impuesta de ordenar su habitación desordenada y terminar absorto leyendo un cómic antiguo y olvidado que encontró arrinconado debajo de la cama.",
-        "Interrumpir impulsivamente la conversación y el hilo temático en la mesa familiar con un comentario o tema completamente desconectado del contexto."
+        "Realizar una actividad escolar individual.",
+        "Leer o escuchar un texto.",
+        "Resolver una tarea con varios pasos.",
+        "Participar en un juego con reglas.",
+        "Trabajar en una actividad elegida o no elegida."
       ]
     }
   },
   {
     id: 9,
-    nombre: "Persistencia",
+    nombre: "Persistencia ante las dificultades",
     corto: "Persistencia",
-    eje: "Persistencia alta",
+    descripcionCorta: "¿Qué hizo ante una dificultad?",
+    eje: "Persistencia ante las dificultades",
     tipo: "num",
     unidad: "minutos",
     umbral: [
       2,
       15
     ],
+    info: {
+      observamos: "Qué tanto continúa intentando realizar una actividad cuando encuentra una dificultad que todavía puede abordarse: seguir intentando, cambiar de estrategia, pedir ayuda o detenerse.",
+      pregunta: "Si la dificultad era adecuada, si comprendía qué tenía que hacer, si recibió ayuda suficiente y si se le permitió detenerse o cambiar de estrategia.",
+      noConcluyas: "Que persistir más siempre sea mejor. Pedir ayuda, cambiar de estrategia o detenerse también puede ser una respuesta adecuada. Persistir ante una tarea no es lo mismo que insistir ante un límite o una negativa; esas situaciones no deben mezclarse en este rasgo.",
+      proposito: "Conocer cómo enfrenta los desafíos y qué apoyo o ajuste facilita que continúe aprendiendo, sin convertir la persistencia en una obligación."
+    },
     situacionLabel: "Desafío, obstáculo o meta",
     datoLabel: "Tiempo de esfuerzo o insistencia (minutos)",
     situaciones: [
-      "Armar un rompecabezas o juego",
-      "Vestirse solo",
+      "Resolver una actividad difícil",
+      "Intentar una tarea con varios pasos",
       "Aprender una habilidad nueva",
-      "Pedir algo que le negamos (un límite)",
-      "Alcanzar un objeto difícil",
-      "Terminar una tarea escolar"
+      "Corregir un error y volver a intentarlo",
+      "Resolver un problema durante el juego",
+      "Construir, armar o crear algo",
+      "Terminar una actividad que requiere varios intentos"
     ],
     q1: {
-      t: "¿La dificultad de la tarea era adecuada para su edad y habilidad actual?",
+      t: "¿La dificultad podía resolverse con otro intento, una estrategia diferente o algún apoyo?",
       o: [
-        "Adecuada",
-        "Muy difícil o muy fácil"
+        "Sí",
+        "No estoy seguro/a",
+        "No"
       ],
-      ok: "Adecuada"
+      ok: "Sí"
     },
     q2: {
-      t: "¿Recibió ánimo, ayuda o compañía durante el intento?",
+      t: "¿Se le permitió detenerse, pedir ayuda o cambiar de estrategia?",
       o: [
-        "No, solo él/ella",
-        "Sí, tuvo apoyo"
+        "Sí",
+        "No",
+        "No fue necesario"
       ],
-      ok: "No, solo él/ella"
+      ok: "Sí"
     },
     pauta: {
-      ambas: "La tarea estaba a su nivel y lo intentó sin apoyo externo. El tiempo de insistencia observado refleja bien su persistencia genuina.",
-      ninguna: "La tarea no estaba bien calibrada a su nivel, y además tuvo apoyo durante el intento. Esto puede inflar o desinflar el tiempo registrado sin reflejar el rasgo puro. Considera ajustar con cautela.",
-      mixta: "Uno de los dos factores pudo influir. Pondera cuál antes de fijar tu puntuación final."
+      ambas: "La dificultad podía abordarse con intentos o estrategias y el niño pudo pedir ayuda, detenerse o cambiar de estrategia. La continuidad observada aporta información sobre cómo afrontó esa dificultad concreta.",
+      ninguna: "La dificultad no tenía una vía clara de resolución o no se permitió pedir ayuda o cambiar de estrategia. No interpretes el abandono como falta de persistencia.",
+      mixta: "Solo una de las condiciones estuvo presente. Considera la dificultad real de la tarea y las posibilidades que tuvo para continuar, pedir ayuda o cambiar de estrategia."
     },
-    criterios: "1 al 3 (Baja): desiste rápido al primer intento fallido (menos de 3 minutos).\n4 al 7 (Media): intenta un tiempo razonable, luego pide ayuda o cambia de actividad.\n8 al 10 (Alta): insiste de forma muy tenaz (más de 15 min); le cuesta flexibilizar un «no».",
+    criterios: "1 al 3 (Persistencia breve): intenta durante un periodo corto o necesita cambiar pronto de estrategia ante la dificultad. Esto puede ser adecuado si la tarea no es accesible o si reconoce que necesita ayuda.\\n4 al 7 (Persistencia intermedia): mantiene el intento, prueba algún ajuste o pide ayuda antes de detenerse.\\n8 al 10 (Persistencia prolongada): continúa intentando, cambia de estrategia o busca apoyos durante un periodo prolongado cuando la dificultad permite seguir trabajando. Persistir no significa insistir indefinidamente ni obedecer una indicación que debería detenerse.",
     accion: [
       "Guiar en micro-metas",
       "Desglosar",
@@ -918,25 +1065,25 @@ const RASGOS = [
     ],
     situacionesPorEtapa: {
       toddler: [
-        "Intentar encajar repetidamente una figura cuadrada en el agujero circular y terminar lanzando violentamente el juguete tras fallar dos veces.",
-        "Querer subir los peldaños de un juego del parque por sí mismo, resbalar y fallar, lanzando un desborde inmediato de llanto.",
-        "Insistir obstinadamente en abotonarse la chaqueta sin ayuda y comenzar a gritar o llorar con desesperación cuando el botón se atasca y no entra.",
-        "Continuar golpeando un tambor u objeto ruidoso de manera repetitiva y obsesiva, y negarse rotundamente a dejarlo cuando es inminentemente la hora de comer.",
-        "Negarse físicamente a soltar una gran rama que encontró durante la caminata en el parque al momento de intentar subir al asiento del auto."
+        "Intentar encajar, construir o armar algo.",
+        "Volver a intentar una acción después de un error.",
+        "Resolver una dificultad durante el juego.",
+        "Aprender una habilidad cotidiana nueva.",
+        "Pedir ayuda después de intentar una acción."
       ],
       preescolar: [
-        "Construir laboriosamente un set de Lego o bloques muy complejo, equivocarse en el posicionamiento de una pieza menor y destruir con rabia la obra completa.",
-        "Intentar con entusiasmo aprender a andar en bicicleta sin rueditas de apoyo y abandonar la tarea furioso al sentir el primer desequilibrio.",
-        "Estar dibujando una figura de su imaginación que no queda perfectamente simétrica y terminar rayando la hoja completa con rabia y llanto.",
-        "Negarse de manera agresiva a interrumpir el clímax de un juego de rol muy inmersivo a pesar de ser llamado reiteradamente tres veces para cenar en familia.",
-        "Tratar de vestirse rápido y de manera autónoma para salir y frustrarse explosivamente si la polera o chaleco se atasca por un segundo en la cabeza."
+        "Completar una construcción o actividad manual.",
+        "Resolver un problema durante un juego.",
+        "Aprender una habilidad nueva.",
+        "Corregir un error y volver a intentarlo.",
+        "Buscar otra forma de realizar una actividad."
       ],
       escolar: [
-        "Fallar un nivel difícil o un desafío de un videojuego cinco veces seguidas y lanzar el control remoto o golpear el escritorio.",
-        "Encontrarse de frente con un problema de matemáticas moderadamente difícil en su tarea y cerrar el cuaderno de golpe diciendo \"soy tonto, no sirvo para esto\".",
-        "Estar tan profundamente inmerso y capturado leyendo un libro o armando un modelo a escala que ignora genuinamente los llamados a gritos de sus padres.",
-        "Insistir irracionalmente en quedarse despierto a pesar de un cansancio extremo, solo para lograr terminar un proyecto manual o dibujo inconcluso.",
-        "Querer dominar por completo un paso de baile complejo o un truco de skate en una sola tarde y frustrarse violentamente al comprobar que no lo logra."
+        "Resolver un problema académico.",
+        "Revisar y corregir un trabajo.",
+        "Aprender un procedimiento nuevo.",
+        "Resolver una dificultad durante un juego o actividad grupal.",
+        "Probar otra estrategia después de que la primera no funcionó."
       ]
     }
   }
@@ -1565,8 +1712,8 @@ const MICRO = {
    localStorage (último recurso, p. ej. navegadores muy antiguos).
    Si ya existían datos en localStorage de una versión previa de este
    archivo, se migran una sola vez a IndexedDB y se limpia el original. */
-const KEY = "bitacora-temperamento:v1";
-const DB_NAME = "bitacora-temperamento-db";
+const KEY = "conociendonos-pruebas-v11:v1";
+const DB_NAME = "conociendonos-pruebas-v11-db";
 const STORE_NAME = "kv";
 let dbPromise = null;
 function abrirDB(){
@@ -1625,17 +1772,86 @@ const store = {
 
 /* versión del esquema de datos: si algún día cambia la forma de S,
    agrega aquí la migración correspondiente antes de subir el número */
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 24;
 function migrar(datos){
   if(!datos) return null;
   // ejemplo para el futuro:
   // if((datos.version||0) < 2){ datos.algoNuevo = ...; }
+  if(!Array.isArray(datos.episodios)) datos.episodios=[];
+  if(!datos.preferencias) datos.preferencias={textoGrande:false, altoContraste:false};
+  if(!Array.isArray(datos.observacionesRapidas)) datos.observacionesRapidas=[];
+  datos.episodios.forEach(e=>{ if(!Array.isArray(e.contexto)) e.contexto=[]; if(typeof e.contextoOtro!=="string") e.contextoOtro=""; if(!Array.isArray(e.apoyos)) e.apoyos=[]; if(typeof e.apoyosOtro!=="string") e.apoyosOtro=""; });
   datos.version = SCHEMA_VERSION;
   return datos;
 }
 
-let S = { version:SCHEMA_VERSION, nino:{nombre:"", edad:"", etapa:""}, episodios:[], adulto:{}, umbrales:{}, micro:[], legalAceptado:false, onboardingVisto:false };
+let S = {
+  version:SCHEMA_VERSION,
+  nino:{nombre:"", edad:"", etapa:""},
+  episodios:[],
+  adulto:{},
+  umbrales:{},
+  micro:[],
+  observacionesRapidas:[],
+  preferencias:{textoGrande:false, altoContraste:false},
+  legalAceptado:false,
+  onboardingVisto:false
+};
 const save = () => store.set(S);
+function aplicarPreferencias(){
+  const p=S.preferencias||{};
+  document.body.classList.toggle("a11y-large", !!p.textoGrande);
+  document.body.classList.toggle("a11y-contrast", !!p.altoContraste);
+}
+
+/* ─────────── reflexión de Nivel 3, por rasgo (solo se muestra si hay registros de ese rasgo) ─────────── */
+const REFLEXIONES_RASGO = {
+  1: { pregunta: "¿Qué estamos observando con el tiempo?",
+    hints: [
+      "Compara intensidad, duración y contexto por separado. Una duración mayor no significa automáticamente una reacción más intensa.",
+      "Si las reacciones intensas aparecen sobre todo en determinados contextos, tómalo como una pista para observar nuevamente esas situaciones, no como una explicación definitiva."
+    ]},
+  2: { pregunta: "¿En qué situaciones parece necesitar más oportunidades de movimiento?",
+    hints: [
+      "Compara situaciones semejantes. Observa si el movimiento cambia cuando puede alternar actividad y calma, cuando la tarea es más exigente o cuando el espacio permite moverse.",
+      "<b>No busques una cantidad “correcta” de movimiento.</b> Busca condiciones que favorezcan su participación."
+    ]},
+  3: { pregunta: "¿Qué tipo de cambios parecen requerir más acompañamiento?",
+    hints: [
+      "<b>Recuerda:</b> el cambio que más se repite no necesariamente es el que más cuesta. Compara situaciones semejantes y observa qué apoyos estuvieron presentes.",
+      "Observa si las dificultades aparecen con determinados cambios, cuando no hubo anticipación o cuando el niño estaba cansado. Estas coincidencias son pistas para ajustar el acompañamiento; no son una explicación definitiva."
+    ]},
+  4: { pregunta: "¿Qué condiciones ayudan a acercarse a situaciones nuevas?",
+    hints: [
+      "Observa si participa con mayor facilidad cuando hay una persona conocida, cuando puede mirar primero, cuando se le explica qué ocurrirá o cuando puede decidir cuándo acercarse.",
+      "<b>Recuerda:</b> necesitar tiempo para observar también puede ser una forma válida de aproximarse."
+    ]},
+  5: { pregunta: "¿Qué situaciones parecen generar formas de expresión que conviene comprender mejor?",
+    hints: [
+      "Compara situaciones semejantes y distingue entre lo que observaste y lo que interpretaste. Pregúntate qué información expresó el niño o la niña y qué parte todavía no puedes saber con seguridad.",
+      "<b>Recuerda:</b> una expresión intensa no es sinónimo de un “mal estado de ánimo”. La aplicación organiza observaciones; no diagnostica estados emocionales."
+    ]},
+  6: { pregunta: "¿Qué rutinas parecen beneficiarse de mayor anticipación o flexibilidad?",
+    hints: [
+      "Compara días y situaciones semejantes. Distingue los cambios habituales de aquellos que ocurrieron por cansancio, malestar, visitas, viajes u otros acontecimientos.",
+      "<b>Recuerda:</b> una rutina flexible puede ser más útil que una rutina rígida cuando las circunstancias cambian."
+    ]},
+  7: { pregunta: "¿Qué características del entorno parecen facilitar o dificultar la participación?",
+    hints: [
+      "Compara situaciones semejantes. Observa si la respuesta cambia cuando el estímulo se anticipa, cuando disminuyen otros estímulos o cuando existe una posibilidad real de tomar distancia y recuperarse.",
+      "<b>Recuerda:</b> un ajuste del entorno no es un premio ni una concesión; puede ser una forma de eliminar una barrera para participar."
+    ]},
+  8: { pregunta: "¿Qué condiciones ayudan a mantener o recuperar la participación?",
+    hints: [
+      "Compara actividades semejantes. Observa si cambia la continuidad cuando la tarea se divide en pasos, se anticipan pausas, se reduce una distracción o se aclara lo que hay que hacer.",
+      "<b>Recuerda:</b> una interrupción no significa automáticamente falta de atención. Primero revisa qué estaba pasando con la tarea y con el entorno."
+    ]},
+  9: { pregunta: "¿Qué apoyos ayudan a continuar ante una dificultad sin convertir la persistencia en presión?",
+    hints: [
+      "Observa si cambia la respuesta cuando la tarea se divide, se ofrece otra estrategia, se permite pedir ayuda o se reconoce que es momento de detenerse.",
+      "<b>Recuerda:</b> abandonar una tarea puede ser una decisión adecuada cuando la dificultad no es accesible, la actividad terminó o continuar ya no es conveniente."
+    ]}
+};
 
 /* ─────────── utilidades ─────────── */
 const $ = s => document.querySelector(s);
@@ -1667,6 +1883,188 @@ function situacionesPara(r){
   return base.concat(staged.filter(s=>!yaHay.has(s)));
 }
 
+/* ─────────── conexión: la aplicación puede usarse sin internet; solo algunas funciones externas necesitan conexión ─────────── */
+function actualizarConexion(){
+  const box=$("#connection-status"), label=$("#connection-label");
+  if(!box||!label) return;
+  const online = navigator.onLine;
+  box.classList.toggle("offline", !online);
+  label.textContent = online ? "Con conexión · tus registros siguen siendo locales" : "Sin conexión · tus registros siguen disponibles";
+}
+window.addEventListener("online", actualizarConexion);
+window.addEventListener("offline", actualizarConexion);
+setTimeout(actualizarConexion, 0);
+
+
+/* ─────────── flujo integrado: observar → comprender → reflexionar ─────────── */
+function flujoIntegrado(e){
+  if(!e) return "";
+  const partes = [];
+  if(e.contexto && Array.isArray(e.contexto) && e.contexto.length){
+    partes.push(`<div class="flow-chip"><b>Contexto:</b> ${esc(e.contexto.join(", "))}</div>`);
+  }
+  if(e.apoyos && Array.isArray(e.apoyos) && e.apoyos.length){
+    partes.push(`<div class="flow-chip"><b>Apoyo:</b> ${esc(e.apoyos.join(", "))}</div>`);
+  }
+  if(e.nota || e.extra){
+    partes.push(`<div class="flow-note"><b>Lo que registraste:</b> ${esc(e.nota || e.extra)}</div>`);
+  }
+  return partes.length ? `<div class="flow-integrado">${partes.join("")}</div>` : "";
+}
+
+function episodiosConContexto(){
+  return (S.episodios||[]).filter(e =>
+    (Array.isArray(e.contexto) && e.contexto.length) ||
+    (Array.isArray(e.apoyos) && e.apoyos.length) ||
+    e.nota || e.extra
+  );
+}
+
+function estrategiasFuncionaron(){
+  return (S.micro||[]).filter(m => m.estado === "funciono");
+}
+
+function reflexionConectada(){
+  const eps = S.episodios || [];
+  const ctxCount = {};
+  const apoyoCount = {};
+  eps.forEach(e=>{
+    (e.contexto||[]).forEach(x=> ctxCount[x]=(ctxCount[x]||0)+1);
+    (e.apoyos||[]).forEach(x=> apoyoCount[x]=(apoyoCount[x]||0)+1);
+  });
+  const top = obj => Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  return {contextos:top(ctxCount), apoyos:top(apoyoCount)};
+}
+
+function abrirDesdeObservacion(id){
+  const e = (S.episodios||[]).find(x=>String(x.id)===String(id));
+  if(!e) return;
+  ir("rasgo",{id:e.rasgo, episodioId:e.id, volverA:"perfil"});
+}
+
+
+function interpretarIntensidadV9(e){
+  const intensidad = Number(e.intensidad ?? e.dato ?? NaN);
+  const dur = e.duracion || "";
+  const contexto = Array.isArray(e.contexto) ? e.contexto : [];
+  const apoyo = Array.isArray(e.apoyos) ? e.apoyos : [];
+  return {
+    intensidad: Number.isFinite(intensidad) ? intensidad : null,
+    duracion: dur,
+    contexto,
+    apoyo,
+    advertencia: "La intensidad y la duración son datos distintos; una observación aislada no define un patrón."
+  };
+}
+
+
+function intensidadParaAnalisisV9(e){
+  const n = Number(e.intensidad);
+  return Number.isFinite(n) ? n : null;
+}
+
+
+function interpretarNivelActividadv11(e){
+  return {
+    dato: e ? (e.dato ?? null) : null,
+    contexto: Array.isArray(e?.contexto) ? e.contexto : [],
+    apoyos: Array.isArray(e?.apoyos) ? e.apoyos : [],
+    advertencia: "El nivel de actividad se interpreta en relación con la situación y las oportunidades de movimiento disponibles."
+  };
+}
+
+
+function interpretarRespuestaCambiosV13(e){
+  return {
+    tiempoTransicion: e?.dato ?? null,
+    contexto: Array.isArray(e?.contexto) ? e.contexto : [],
+    apoyos: Array.isArray(e?.apoyos) ? e.apoyos : [],
+    advertencia: "El tiempo para retomar o aceptar un cambio depende del tipo de cambio y del contexto; no define por sí mismo una capacidad fija."
+  };
+}
+
+function interpretarNivelActividadV15(e){
+  return {
+    movimiento:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"El movimiento observado se interpreta según la situación y las oportunidades reales de movimiento; no define una característica fija ni una condición clínica."
+  };
+}
+
+function interpretarAcercamientoV16(e){
+  return {
+    tiempo:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"La velocidad de acercamiento no define madurez, capacidad social ni un problema; debe interpretarse según familiaridad, seguridad, presión y posibilidad de observar."
+  };
+}
+
+function interpretarPercepcionExpresionV17(e){
+  return {
+    intensidad:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"Una expresión observable no permite diagnosticar un estado de ánimo ni conocer con certeza una experiencia interna sin información suficiente."
+  };
+}
+
+function interpretarRitmosRutinasV18(e){
+  return {
+    variacion:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"Una variación temporal en una rutina no define una característica fija ni indica por sí misma un problema; debe interpretarse según las circunstancias."
+  };
+}
+
+function interpretarEstimulosEntornoV19(e){
+  return {
+    intensidad:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"La respuesta ante un estímulo describe una situación concreta; no diagnostica sensibilidad ni define una característica fija."
+  };
+}
+
+function interpretarAtencionContinuidadV20(e){
+  return {
+    continuidad:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"La continuidad en una actividad depende de la tarea, el entorno y los apoyos; no mide inteligencia, obediencia ni una capacidad general de atención."
+  };
+}
+
+function interpretarPersistenciaV21(e){
+  return {
+    continuidad:e?.dato ?? null,
+    contexto:Array.isArray(e?.contexto)?e.contexto:[],
+    apoyos:Array.isArray(e?.apoyos)?e.apoyos:[],
+    advertencia:"La persistencia se interpreta según la dificultad, las estrategias y los apoyos disponibles; no equivale a obediencia ni exige continuar indefinidamente."
+  };
+}
+
+
+/* ─────────── principio de no agregación entre los 9 rasgos ───────────
+   promedio(id) y rango(id) solo leen episodios del MISMO rasgo (eps() filtra por e.rasgo===id).
+   No existe en el código ninguna función que sume o combine puntuaciones entre rasgos distintos:
+   cada uno se calcula, se muestra y se interpreta de forma independiente. Esta función se llama
+   desde vPerfil() para dejar esa regla verificable en tiempo de ejecución, no solo en el texto. */
+function verificarSinAgregacionGlobal(){
+  const porRasgo = RASGOS.map(r => promedio(r.id));
+  const conDatos = porRasgo.filter(v => v != null);
+  return {
+    porRasgo,
+    ejemploNoSumar: conDatos.length >= 2
+      ? "Ejemplo: " + conDatos.slice(0,2).map(v=>v.toFixed(1)).join(" y ") + " son observaciones de dos rasgos distintos; no se suman ni se combinan en ningún cálculo de la aplicación."
+      : "",
+    principio: "Cada rasgo se calcula y se muestra por separado. Ningún cálculo de la aplicación suma puntuaciones entre rasgos ni produce un número, perfil o diagnóstico global."
+  };
+}
+
+
 /* ─────────── navegación ─────────── */
 let vista = "rasgos", ctx = {};
 function ir(v, c={}){ vista=v; ctx=c; render(); window.scrollTo(0,0); }
@@ -1675,26 +2073,94 @@ document.querySelectorAll("nav.tabs button").forEach(b=>{
 });
 $("#back").onclick = () => ir(ctx.volverA || "rasgos", ctx.volverCtx || {});
 
-function chrome(eyebrow, titulo, sub, back){
+function chrome(eyebrow, titulo, sub, back, captura){
   $("#eyebrow").textContent = eyebrow;
   $("#title").textContent = titulo;
   $("#sub").textContent = sub;
   $("#back").style.display = back ? "block" : "none";
+  const shot = $("#shot"), header = document.querySelector("header.app");
+  if(captura){
+    shot.style.display = "flex";
+    shot.onclick = ()=> capturarVentana(captura);
+    header.classList.add("con-captura");
+  } else {
+    shot.style.display = "none";
+    shot.onclick = null;
+    header.classList.remove("con-captura");
+  }
   document.querySelectorAll("nav.tabs button").forEach(b=>
     b.classList.toggle("on", b.dataset.tab === (["rasgos","rasgo","form"].includes(vista)?"rasgos":vista)));
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("on"));
 }
 
+/* ─────────── registro rápido: observar ahora, profundizar después ─────────── */
+const RAPIDAS = [
+  {id:"intensidad", rasgo:1, icon:"😣", t:"Reaccionó con mucha intensidad", sub:"Una emoción o reacción fue más fuerte de lo habitual."},
+  {id:"cambio", rasgo:3, icon:"🔄", t:"Le costó un cambio", sub:"Pasar de una actividad, lugar o situación a otra fue difícil."},
+  {id:"nuevo", rasgo:4, icon:"🆕", t:"Algo nuevo le costó", sub:"Necesitó tiempo, apoyo u observación ante algo desconocido."},
+  {id:"movimiento", rasgo:2, icon:"🏃", t:"Necesitó mucho movimiento", sub:"Buscó moverse o le costó permanecer en una actividad tranquila."},
+  {id:"ambiente", rasgo:7, icon:"🔊", t:"Algo del ambiente le molestó", sub:"Ruido, luz, textura, personas u otro estímulo influyó."},
+  {id:"atencion", rasgo:8, icon:"👀", t:"Algo del entorno llamó su atención", sub:"Un estímulo interrumpió o desvió una actividad."},
+  {id:"rutina", rasgo:6, icon:"🛏️", t:"Su rutina cambió", sub:"El sueño, comida, baño, siesta o despertar fueron diferentes."},
+  {id:"persistencia", rasgo:9, icon:"🎯", t:"Le costó continuar una actividad", sub:"Encontró una dificultad y observaste cómo respondió."},
+  {id:"otro", rasgo:1, icon:"💬", t:"Otra situación", sub:"Anota brevemente lo que ocurrió y después decidimos cómo comprenderlo."}
+];
+function rapidoDetallesHTML(){
+  const intensidad=[1,2,3,4,5,6,7,8,9,10].map(n=>'<button data-qi="'+n+'" aria-pressed="'+(F.intensidad===n?'true':'false')+'" class="'+(F.intensidad===n?'on':'')+'">'+n+'</button>').join('');
+  const duraciones=["Menos de 5 min","5–15 min","15–30 min","Más de 30 min"].map(x=>'<button data-qd="'+x+'" aria-pressed="'+(F.duracion===x?'true':'false')+'" class="'+(F.duracion===x?'on':'')+'">'+x+'</button>').join('');
+  const contextos=["Cansancio o hambre","Transición o cambio inesperado","Ruido, mucha gente o sobrecarga","Actividad nueva o difícil","Dificultad para comunicar algo","Malestar físico o enfermedad","Límite, espera o frustración","No identifico un factor claro"].map(c=>'<button type="button" class="context-chip '+(F.contexto.includes(c)?'on':'')+'" aria-pressed="'+(F.contexto.includes(c)?'true':'false')+'" data-qc="'+esc(c)+'">'+esc(c)+'</button>').join('');
+  return '<div class="card">'+
+    '<label class="f">¿Qué tan intensa fue la reacción?</label>'+ 
+    '<div class="track" role="group" aria-label="Intensidad de 1 a 10">'+intensidad+'</div>'+ 
+    '<div class="track-legend"><span>Suave</span><span>Intermedia</span><span>Muy intensa</span></div>'+ 
+    '<label class="f" style="margin-top:16px">¿Cuánto duró aproximadamente?</label>'+ 
+    '<div class="seg" role="group" aria-label="Duración aproximada">'+duraciones+'</div>'+ 
+    '<label class="f" style="margin-top:16px">¿Había algo diferente alrededor? <span class="hint">(opcional)</span></label>'+ 
+    '<div class="context-grid" role="group">'+contextos+'</div>'+ 
+    '<label class="f" for="qnota">¿Quieres dejar una nota?</label>'+ 
+    '<textarea id="qnota" placeholder="Una frase es suficiente. Ej. Se molestó al apagar la televisión.">'+esc(F.nota)+'</textarea>'+ 
+    '</div>'+
+    '<div class="card" style="background:var(--jade-soft)"><p style="margin:0 0 8px"><b>Esto todavía no modifica ningún promedio.</b></p><p class="hint" style="margin:0">Guardaremos esta observación para que puedas revisarla con calma después. Si quieres profundizar, podrás completar el registro cuando tengas tiempo.</p></div>'+
+    '<button class="btn" id="guardarRapido" '+(!F.tipo||!F.intensidad||!F.duracion?'disabled':'')+'>Guardar observación</button>';
+}
+function vRapido(){
+  chrome("Registro rápido", "¿Qué pasó hoy?", "Cuéntalo en menos de un minuto", true);
+  ctx.volverA="rasgos";
+  const el=$("#v-rapido"); el.classList.add("on");
+  if(!F.rapido) F={rapido:true,fecha:new Date().toISOString().slice(0,10),tipo:"",intensidad:"",duracion:"",contexto:[],nota:""};
+  const eventos=RAPIDAS.map(x=>'<button class="quick-event '+(F.tipo===x.id?'on':'')+'" data-quicktipo="'+x.id+'" aria-pressed="'+(F.tipo===x.id?'true':'false')+'"><span style="font-size:23px">'+x.icon+'</span><span style="text-align:left"><b>'+esc(x.t)+'</b><small style="display:block;color:var(--muted);margin-top:2px">'+esc(x.sub)+'</small></span></button>').join('');
+  el.innerHTML=`
+    <div class="card">
+      <p style="margin:0 0 6px;font-size:17px;font-weight:600">No necesitas saber qué rasgo es.</p>
+      <p class="hint" style="margin:0">Primero cuéntanos qué pasó. La aplicación puede ayudarte a relacionarlo con los rasgos después.</p>
+    </div>
+    <div class="section-title">¿Qué pasó?</div>
+    <div class="card" style="display:grid;gap:9px">${eventos}</div>
+    ${F.tipo ? rapidoDetallesHTML() : ''}`;
+  el.querySelectorAll("[data-quicktipo]").forEach(b=>b.onclick=()=>{F.tipo=b.dataset.quicktipo;vRapido();});
+  el.querySelectorAll("[data-qi]").forEach(b=>b.onclick=()=>{F.intensidad=+b.dataset.qi;vRapido();});
+  el.querySelectorAll("[data-qd]").forEach(b=>b.onclick=()=>{F.duracion=b.dataset.qd;vRapido();});
+  el.querySelectorAll("[data-qc]").forEach(b=>b.onclick=()=>{const c=b.dataset.qc;F.contexto=F.contexto.includes(c)?F.contexto.filter(x=>x!==c):[...F.contexto,c];vRapido();});
+  const qn=$("#qnota"); if(qn) qn.oninput=e=>F.nota=e.target.value;
+  const g=$("#guardarRapido"); if(g) g.onclick=()=>{
+    const x=RAPIDAS.find(z=>z.id===F.tipo);
+    const obs={id:"qr-"+Date.now(),fecha:F.fecha,rasgo:x.rasgo,tipo:F.tipo,intensidad:F.intensidad,duracion:F.duracion,contexto:F.contexto.slice(),nota:F.nota||""};
+    if(!Array.isArray(S.observacionesRapidas)) S.observacionesRapidas=[];
+    S.observacionesRapidas.push(obs); save(); F={}; ir("rasgos");
+  };
+}
+
 /* ─────────── vista: lista de rasgos ─────────── */
 function vRasgos(){
-  chrome("Bitácora reflexiva", S.nino.nombre ? S.nino.nombre : "Temperamento infantil",
+  chrome("CONOCIÉNDONOS", S.nino.nombre ? S.nino.nombre : "Observación familiar",
          S.episodios.length ? S.episodios.length + " registros · " + new Set(S.episodios.map(e=>e.rasgo)).size + " de 9 rasgos con datos"
-                            : "9 rasgos · observación doméstica", false);
+                            : "9 rasgos · observación doméstica", false, "9 rasgos");
   const el = $("#v-rasgos"); el.classList.add("on");
   el.innerHTML = `
     <div class="card">
-      <div class="eyebrow">Quién estás observando</div>
-      <label class="f" for="nino">Nombre o apodo</label>
+      
+      <div class="eyebrow">Sobre el niño o la niña</div>
+      <label class="f" for="nino">Nombre o apodo <span class="hint">(opcional)</span></label>
       <input type="text" id="nino" value="${esc(S.nino.nombre)}" placeholder="Solo para ti; se guarda en este teléfono">
       <label class="f" for="edad">Edad o etapa</label>
       <input type="text" id="edad" value="${esc(S.nino.edad)}" placeholder="Ej. 6 años">
@@ -1703,8 +2169,37 @@ function vRasgos(){
         ${ETAPAS.map(([k,lab])=>`<button data-etapa="${k}" aria-pressed="${S.nino.etapa===k}" class="${S.nino.etapa===k?"on":""}">${lab}</button>`).join("")}
       </div>
     </div>
-    <div class="section-title">Registrar un episodio</div>
-    <p class="hint" style="margin:-4px 0 14px">Elige el rasgo que viste hoy. No hace falta llenarlos todos ni hacerlo a diario.</p>
+    
+<div class="card flow-steps" style="margin-bottom:14px">
+  <div class="eyebrow">Así funciona CONOCIÉNDONOS</div>
+  <div style="margin-top:8px"><b>1. Observar rápidamente</b><br><span class="hint">¿Qué pasó?</span></div>
+  <div style="margin-top:8px"><b>2. Comprender cuando haya tiempo</b><br><span class="hint">¿Qué estaba pasando alrededor? ¿Qué apoyo recibió o podría ayudar?</span></div>
+  <div style="margin-top:8px"><b>3. Reflexionar con el tiempo</b><br><span class="hint">¿Qué patrones estamos encontrando? ¿Qué estrategias nos funcionan?</span></div>
+</div>
+
+
+<div class="card family-intro">
+  <div class="eyebrow">OBSERVAR · COMPRENDER · REFLEXIONAR</div>
+  <h2 style="margin:6px 0 8px">Registra solo lo que te haya llamado la atención hoy.</h2>
+  <p style="margin:0">No necesitas llenar los 9 rasgos ni hacerlo todos los días. Elige uno y registra lo ocurrido en menos de un minuto.</p>
+</div>
+
+<div class="section-title">¿Qué pasó hoy?</div>
+<p class="hint family-safety"><b>Nota:</b> esta herramienta ayuda a observar situaciones cotidianas; no es un diagnóstico.</p>
+    <div class="card" style="background:var(--jade-soft);margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:25px">⚡</div>
+        <div><b>¿Pasó algo y quieres anotarlo ahora?</b><div class="hint" style="margin-top:3px">Haz un registro rápido. No necesitas saber qué rasgo es.</div></div>
+      </div>
+      <button class="btn" id="registroRapido" style="margin-top:12px">Registrar en menos de un minuto</button>
+    </div>
+    ${Array.isArray(S.observacionesRapidas)&&S.observacionesRapidas.length?`<div class="section-title">Observaciones pendientes de revisar</div>
+    <div class="card">
+      <p class="hint" style="margin:0 0 10px">Estas notas todavía no afectan tus promedios. Puedes revisarlas cuando tengas tiempo.</p>
+      ${S.observacionesRapidas.slice().reverse().map(o=>{const rr=RASGOS.find(r=>r.id===o.rasgo);return `<div class="log-item" style="align-items:flex-start"><span class="d">${esc(o.fecha.slice(5).replace("-","/"))}</span><span class="s"><b>${esc((RAPIDAS.find(x=>x.id===o.tipo)||{}).t||"Observación")}</b><div class="hint" style="margin-top:3px">${esc(o.nota||o.contexto.join(" · ")||"Sin nota adicional")}</div></span><button class="btn small" data-revisar="${o.id}" style="margin:0">Revisar</button><button class="del" data-qdel="${o.id}">✕</button></div>`}).join("")}
+    </div>`:""}
+    <div class="section-title">También puedes revisar por rasgo</div>
+    <p class="hint" style="margin:-4px 0 14px">No necesitas registrarlos todos ni hacerlo a diario. Cuando quieras profundizar, elige el rasgo que quieras comprender mejor.</p>
     ${RASGOS.map(r=>{
       const p = promedio(r.id), n = eps(r.id).length, rg = rango(r.id), ic = icono(r.id);
       return `<button class="rasgo-card" data-r="${r.id}" style="--rc:${ic.color}; --rt:${tint(ic.color)}">
@@ -1717,12 +2212,15 @@ function vRasgos(){
       </button>`;}).join("")}
     <div class="foot">
       Basado en Thomas &amp; Chess (New York Longitudinal Study, 1956). Adaptación al español: Andrea Cardemil Ricke, <i>Apego seguro</i>, cap. II (2017). Operacionalización: Prof. Eduardo Kantún Martínez.<br><br>
-      Este instrumento facilita la observación doméstica. <b>No diagnostica</b> y no reemplaza una evaluación profesional.
+      Esta herramienta facilita la observación familiar. <b>No diagnostica</b>, no etiqueta y no reemplaza una evaluación profesional. La intención es ayudarte a observar patrones para ajustar el acompañamiento y el entorno.
     </div>`;
   $("#nino").oninput = e => { S.nino.nombre = e.target.value; save(); };
   $("#edad").oninput = e => { S.nino.edad = e.target.value; save(); };
   el.querySelectorAll("[data-etapa]").forEach(b=> b.onclick = ()=>{ S.nino.etapa = S.nino.etapa===b.dataset.etapa? "" : b.dataset.etapa; save(); vRasgos(); });
   el.querySelectorAll("[data-r]").forEach(b=> b.onclick = ()=> ir("rasgo",{id:+b.dataset.r}));
+  $("#registroRapido").onclick=()=>{F={};ir("rapido")};
+  el.querySelectorAll("[data-revisar]").forEach(b=>b.onclick=()=>{const o=S.observacionesRapidas.find(x=>x.id===b.dataset.revisar);if(!o)return;const rr=RASGOS.find(r=>r.id===o.rasgo);F={rasgo:rr.id,fecha:o.fecha,situacion:(RAPIDAS.find(x=>x.id===o.tipo)||{}).t||"",dato:"",extra:o.nota||"",q1:"",q2:"",punt:null,h1:"",h2:"",contexto:o.contexto||[],contextoOtro:"",apoyos:[],apoyosOtro:"",rapidaId:o.id,quickIntensity:o.intensidad,quickDuration:o.duracion};ir("form",{id:rr.id,rapidaId:o.id})});
+  el.querySelectorAll("[data-qdel]").forEach(b=>b.onclick=()=>{S.observacionesRapidas=S.observacionesRapidas.filter(x=>x.id!==b.dataset.qdel);save();vRasgos();});
 }
 
 /* ─────────── vista: detalle de un rasgo ─────────── */
@@ -1747,8 +2245,8 @@ function vRasgo(){
         </div>
         ${rg && rg[1]-rg[0] >= 4 ? `<div class="diverge" style="margin-top:12px">Tus puntuaciones varían bastante entre episodios. El promedio por sí solo esconde esa variación: vale la pena mirar en qué contextos aparece cada extremo antes de leerlo como un rasgo estable.</div>`:""}
         <div class="hint" style="margin-top:12px"><b>Acción sugerida en esta banda:</b> ${esc(r.accion[banda])}</div>
-      ` : `<div class="empty">Aún no hay registros de este rasgo.<br>El primero toma menos de un minuto.</div>`}
-      <button class="btn" id="nuevo">Registrar un episodio</button>
+      ` : `<div class="empty">Aún no hay registros de este rasgo.<br>Puedes registrarlo en menos de un minuto con el registro rápido, o profundizar aquí cuando tengas tiempo.</div>`}
+      <button class="btn" id="nuevo">¿Qué pasó hoy?</button>
     </div>
     ${(()=>{ const mp = microPendiente(r.id); return mp ? `
     <div class="card m-pend">
@@ -1762,6 +2260,12 @@ function vRasgo(){
       </div>
       <p class="m-note" style="margin-bottom:0">Cualquier respuesta es información útil; «soltarla» también es válido.</p>
     </div>` : "";})()}
+    <details><summary>ⓘ ¿Qué significa este rasgo?</summary><div class="inner">
+      <p><b>Observamos:</b> ${esc(r.info.observamos)}</p>
+      <p><b>Pregúntate:</b> ${esc(r.info.pregunta)}</p>
+      <p><b>No concluyas:</b> ${esc(r.info.noConcluyas)}</p>
+      <p><b>Propósito:</b> ${esc(r.info.proposito)}</p>
+    </div></details>
     <details><summary>Criterios de puntuación (1 al 10)</summary><div class="inner">${esc(r.criterios)}</div></details>
     <details><summary>Umbral del dato observado</summary><div class="inner">${r.tipo==="cat"
       ? `Este rasgo se registra por categoría, no por umbral numérico. Opciones: ${r.opciones.map(o=>esc(o[0])).join(" · ")}.`
@@ -1793,10 +2297,14 @@ function vForm(){
   chrome("Nuevo registro", r.corto, "Tú decides la puntuación final", true);
   ctx.volverA = "rasgo"; ctx.volverCtx = {id:r.id};
   const el = $("#v-form"); el.classList.add("on");
-  if(F.rasgo !== r.id) F = {rasgo:r.id, fecha:new Date().toISOString().slice(0,10), situacion:"", dato:"", extra:"", q1:"", q2:"", punt:null, h1:"", h2:""};
+  if(F.rasgo !== r.id) {
+    const ro=ctx.rapidaId && Array.isArray(S.observacionesRapidas)?S.observacionesRapidas.find(x=>x.id===ctx.rapidaId):null;
+    F = {rasgo:r.id, fecha:ro?.fecha||new Date().toISOString().slice(0,10), situacion:ro?((RAPIDAS.find(x=>x.id===ro.tipo)||{}).t||""):"", dato:(r.id===1&&ro?.intensidad!=null?String(ro.intensidad):""), extra:ro?.nota||"", q1:"", q2:"", punt:null, h1:"", h2:"", contexto:ro?.contexto||[], contextoOtro:"", rapidaId:ro?.id||null, quickIntensity:ro?.intensidad||null, quickDuration:ro?.duracion||""};
+  }
 
   el.innerHTML = `
     <div class="card">
+      ${F.quickIntensity?`<div class="warn" style="margin-bottom:12px"><b>Vienes de un registro rápido.</b> Marcaste una intensidad de ${F.quickIntensity}/10${F.quickDuration?` y una duración aproximada de ${esc(F.quickDuration)}`:""}. Tómalo como referencia: aquí puedes completar el registro con calma y decidir la puntuación final.</div>`:""}
       <label class="f" for="fecha">Fecha</label>
       <input type="date" id="fecha" value="${F.fecha}">
       <label class="f">${esc(r.situacionLabel)}</label>
@@ -1818,6 +2326,26 @@ function vForm(){
           <div class="hint" style="margin-top:8px" id="desv" aria-live="polite">${F.dato!==""? "Desviación: "+F.dato+" minutos" : "La desviación se calcula sola."}</div>`
         : `<input type="number" inputmode="numeric" min="0" id="dato" value="${F.dato}" placeholder="${esc(r.unidad)}" aria-label="${esc(r.datoLabel)}">`}
 
+      <div class="card" style="margin:14px 0 0;padding:14px;background:var(--paper)">
+        <label class="f" id="contextolbl">¿Qué estaba pasando alrededor? <span class="hint">(opcional)</span></label>
+        <div class="a11y-note">No necesitas encontrar una explicación. Marca solo lo que te parezca relevante para entender el contexto. Una reacción puede cambiar según el cansancio, el ambiente, la comunicación, la demanda o los apoyos disponibles.</div>
+        <div class="context-grid" role="group" aria-labelledby="contextolbl">
+          ${["Cansancio o hambre","Transición o cambio inesperado","Ruido, mucha gente o sobrecarga","Actividad nueva o difícil","Dificultad para comunicar lo que necesitaba","Malestar físico o enfermedad","Límite, espera o frustración","No identifico un factor claro"].map(c=>`<button type="button" class="context-chip ${F.contexto.includes(c)?"on":""}" aria-pressed="${F.contexto.includes(c)}" data-contexto="${esc(c)}">${esc(c)}</button>`).join("")}
+        </div>
+        <label class="f" for="contextoOtro" style="margin-top:10px">Otro contexto, si quieres anotarlo</label>
+        <input type="text" id="contextoOtro" value="${esc(F.contextoOtro)}" placeholder="Ej. visita familiar, cambio de rutina, transporte…">
+
+        <details style="margin-top:14px">
+          <summary>Si quieres profundizar: ¿qué apoyo recibió o podría ayudar?</summary>
+          <p class="hint" style="margin:8px 0">No necesitas elegir una explicación. Marca solo los apoyos que realmente estuvieron presentes o que crees que podrían facilitar la situación.</p>
+          <div class="context-grid" role="group" aria-label="Apoyos observados o posibles">
+            ${["Necesitó tiempo para responder o cambiar","Necesitó una explicación más corta o repetida","Le ayudó anticipar lo que iba a ocurrir","Le ayudó un apoyo visual o demostración","Necesitó un espacio más tranquilo","Necesitó una forma distinta de comunicar lo que quería","Necesitó acompañamiento cercano","No parecía necesitar un apoyo especial"].map(c=>`<button type="button" class="context-chip ${F.apoyos.includes(c)?"on":""}" aria-pressed="${F.apoyos.includes(c)}" data-apoyo="${esc(c)}">${esc(c)}</button>`).join("")}
+          </div>
+          <label class="f" for="apoyosOtro" style="margin-top:10px">Otro apoyo, si quieres anotarlo</label>
+          <input type="text" id="apoyosOtro" value="${esc(F.apoyosOtro)}" placeholder="Ej. objeto de referencia, descanso, contacto físico…">
+        </details>
+      </div>
+
       <label class="f" id="q1lbl">${esc(r.q1.t)}</label>
       <div class="seg" role="group" aria-labelledby="q1lbl">${r.q1.o.map(o=>`<button data-q1="${esc(o)}" aria-pressed="${F.q1===o}" class="${F.q1===o?"on":""}">${esc(o)}</button>`).join("")}</div>
       <label class="f" id="q2lbl">${esc(r.q2.t)}</label>
@@ -1830,8 +2358,10 @@ function vForm(){
   on("[data-dato]", b => F.dato = b.dataset.dato);
   on("[data-q1]", b => F.q1 = b.dataset.q1);
   on("[data-q2]", b => F.q2 = b.dataset.q2);
+  on("[data-contexto]", b => { const c=b.dataset.contexto; F.contexto = F.contexto.includes(c) ? F.contexto.filter(x=>x!==c) : [...F.contexto,c]; });
   const bind = (id, k, after) => { const n = el.querySelector(id); if(n) n.oninput = e => { F[k] = e.target.value; if(after) after(); }; };
-  bind("#fecha","fecha"); bind("#sit","situacion"); bind("#extra","extra");
+  bind("#fecha","fecha"); bind("#sit","situacion"); bind("#extra","extra"); bind("#contextoOtro","contextoOtro"); bind("#apoyosOtro","apoyosOtro");
+  on("[data-apoyo]", b => { const a=b.dataset.apoyo; F.apoyos = F.apoyos.includes(a) ? F.apoyos.filter(x=>x!==a) : [...F.apoyos,a]; });
   bind("#dato","dato", pintarDecision);
   if(r.tipo==="horas"){
     const calc = ()=>{
@@ -1881,9 +2411,9 @@ function vForm(){
     const g = cont.querySelector("#guardar");
     if(g) g.onclick = ()=>{
       const ep = {id:String(Date.now()), rasgo:r.id, fecha:F.fecha, situacion:F.situacion,
-        extra:F.extra, dato:F.dato, q1:F.q1, q2:F.q2, banda:banda, puntuacion:F.punt,
-        divergio:(F.punt<lo||F.punt>hi)};
-      S.episodios.push(ep);
+        extra:F.extra, dato:F.dato, q1:F.q1, q2:F.q2, banda:banda, puntuacion:F.punt, intensidad:F.quickIntensity ?? null, duracion:F.quickDuration ?? null,
+        divergio:(F.punt<lo||F.punt>hi), contexto:[...F.contexto], contextoOtro:F.contextoOtro, apoyos:[...F.apoyos], apoyosOtro:F.apoyosOtro}; S.episodios.push(ep);
+      if(F.rapidaId && Array.isArray(S.observacionesRapidas)){ S.observacionesRapidas=S.observacionesRapidas.filter(x=>x.id!==F.rapidaId); }
       save(); F = {}; ir("rasgo",{id:r.id});
       microFlujo(ep);
     };
@@ -1892,11 +2422,11 @@ function vForm(){
 
 /* ─────────── vista: bitácora espejo del adulto ─────────── */
 function vEspejo(){
-  chrome("Bitácora espejo", "Tu temperamento", "La fricción vive en la brecha, no en el niño", false);
+  chrome("Bitácora espejo", "Tu temperamento", "La fricción vive en la brecha, no en el niño", false, "Espejo");
   const el = $("#v-espejo"); el.classList.add("on");
   el.innerHTML = `
     <div class="card">
-      <p class="hint" style="margin:0">Aquí no llevas bitácora diaria: lees los criterios de cada rasgo aplicados <b>a ti</b> y decides en qué banda te reconoces. La distancia con el promedio de tu hija o hijo explica buena parte de los choques cotidianos.</p>
+      <p class="hint" style="margin:0">Aquí no llevas bitácora diaria: lees los criterios de cada rasgo aplicados <b>a ti</b> y decides en qué banda te reconoces. La distancia con el promedio de tu hija o hijo puede ayudar a anticipar algunas diferencias, pero <b>una diferencia no significa que alguno de los dos esté mal</b>.</p>
     </div>
     <div class="card">
       ${RASGOS.map(r=>{
@@ -1924,6 +2454,15 @@ function vEspejo(){
   el.querySelectorAll("[data-a]").forEach(i=> i.oninput = e=>{
     S.adulto[+i.dataset.a] = +e.target.value; save(); vEspejo();
   });
+  const setA11y = (large, contrast)=>{
+    document.body.classList.toggle("a11y-large", !!large);
+    document.body.classList.toggle("a11y-contrast", !!contrast);
+    S.preferencias = Object.assign({}, S.preferencias||{}, {textoGrande:!!large, altoContraste:!!contrast});
+    save(); vPerfil();
+  };
+  $("#a11y-normal").onclick = ()=> setA11y(false, document.body.classList.contains("a11y-contrast"));
+  $("#a11y-large").onclick = ()=> setA11y(true, document.body.classList.contains("a11y-contrast"));
+  $("#a11y-contrast").onclick = ()=> setA11y(document.body.classList.contains("a11y-large"), !document.body.classList.contains("a11y-contrast"));
 }
 
 /* ─────────── vista: perfil (radar) ─────────── */
@@ -1960,7 +2499,7 @@ function feedbackReintentarPendientes(){
 }
 
 function vFeedback(){
-  chrome("Perfil", "Tu feedback", "5 preguntas · 2 minutos", true);
+  chrome("Perfil", "Tu opinión", "5 preguntas · 2 minutos", true);
   ctx.volverA = "perfil";
   const el = $("#v-feedback"); el.classList.add("on");
   const preguntas = [
@@ -1977,7 +2516,7 @@ function vFeedback(){
   ];
   el.innerHTML = `
     <div class="card">
-      <p class="hint" style="margin:0 0 14px">Esto no incluye ningún dato de los episodios que registraste — solo tu impresión general. Toma unos 2 minutos.</p>
+      <p class="hint" style="margin:0 0 14px">Enviar feedback es opcional. Esta acción sí necesita internet y envía únicamente tus respuestas sobre la experiencia de uso; no envía los episodios de la bitácora ni el nombre o edad del niño/a. Toma unos 2 minutos.</p>
       ${preguntas.map(p=>`
         <label class="f">${esc(p.label)}</label>
         <div class="seg" role="group" aria-label="${esc(p.label)}" data-grupo="${p.id}">
@@ -2021,8 +2560,6 @@ function vFeedback(){
     const btn = $("#fb-enviar");
     btn.disabled = true; btn.textContent = "Enviando…";
     const payload = {
-      nino_nombre: S.nino.nombre || "",
-      nino_edad: S.nino.edad || "",
       dias_usando: respuestas.dias || "",
       utilidad_rasgos: respuestas.utilidad || "",
       calidad_sugerencias: respuestas.sugerencias || "",
@@ -2035,14 +2572,12 @@ function vFeedback(){
     };
     feedbackEnviarUno(payload)
       .then(()=>{
-        $("#fb-estado").textContent = "¡Gracias! Tu feedback se envió.";
+        $("#fb-estado").textContent = "¡Gracias! Tu opinión se envió.";
         setTimeout(()=> ir("perfil"), 1400);
       })
       .catch(()=>{
-        const q = feedbackQueueGet(); q.push(payload); feedbackQueueSet(q);
-        $("#fb-estado").textContent = "Sin internet ahora mismo: se guardó en tu teléfono y se enviará solo en cuanto haya conexión.";
-        btn.textContent = "Enviar feedback"; btn.disabled = false;
-        setTimeout(()=> ir("perfil"), 2200);
+        $("#fb-estado").textContent = "No se pudo enviar porque no hay conexión disponible. No se guardó ni se enviará automáticamente. Puedes intentarlo de nuevo cuando tengas internet.";
+        btn.textContent = "Intentar de nuevo"; btn.disabled = false;
       });
   };
 }
@@ -2053,7 +2588,7 @@ function reporteHTML(){
   const rasgosConDatos = RASGOS.filter(r=> eps(r.id).length>0);
   const rasgosSinDatos = RASGOS.filter(r=> eps(r.id).length===0);
   return `
-    <h1>Bitácora Reflexiva del Temperamento</h1>
+    <h1>Conociéndonos</h1>
     <p>${esc(S.nino.nombre||"(sin nombre)")} · ${esc(S.nino.edad||"edad no especificada")} · Reporte generado el ${fechaHoy}</p>
     <p style="font-size:12px">Este documento proviene de observación doméstica. No es un instrumento de diagnóstico ni sustituye una evaluación profesional.</p>
 
@@ -2063,7 +2598,7 @@ function reporteHTML(){
       return `<div class="rep-rasgo">
         <b>${esc(r.nombre)}</b> — promedio ${p.toFixed(1)}${rg? ` · rango ${rg[0]}–${rg[1]}`:""} · ${eps(r.id).length} registro${eps(r.id).length>1?"s":""}
         ${eps(r.id).slice().sort((a,b)=>a.fecha<b.fecha?1:-1).map(e=>
-          `<div class="rep-ep">${e.fecha} — ${esc(e.situacion||"(sin descripción)")} · puntuación ${e.puntuacion}${e.divergio?" (se apartó de la banda sugerida)":""}${e.extra?`<br><i>${esc(e.extra)}</i>`:""}</div>`
+          `<div class="rep-ep">${e.fecha} — ${esc(e.situacion||"(sin descripción)")} · puntuación ${e.puntuacion}${e.divergio?" (se apartó de la banda sugerida)":""}${e.extra?`<br><i>${esc(e.extra)}</i>`:""}${(e.contexto&&e.contexto.length)||e.contextoOtro?`<br><span class="hint">Contexto: ${esc((e.contexto||[]).join("; "))}${e.contextoOtro?`${e.contexto&&e.contexto.length?"; ":""}${esc(e.contextoOtro)}`:""}</span>`:""}${(e.apoyos&&e.apoyos.length)||e.apoyosOtro?`<br><span class="hint">Apoyos: ${esc((e.apoyos||[]).join("; "))}${e.apoyosOtro?`${e.apoyos&&e.apoyos.length?"; ":""}${esc(e.apoyosOtro)}`:""}</span>`:""}</div>`
         ).join("")}
       </div>`;
     }).join("") : "<p>Sin registros todavía.</p>"}
@@ -2081,14 +2616,56 @@ function reporteHTML(){
       }).join("")}
     </table>
 
-    <h2>Perfil</h2>
+    <h2>Patrones observados</h2>
     <p>Nombre o apodo: ${esc(S.nino.nombre||"—")}<br>Edad o etapa: ${esc(S.nino.edad||"—")}</p>
 
-    <div class="rep-foot">Generado con la Bitácora Reflexiva del Temperamento · lalitoelprofefulanito-dot.github.io/Bitacora-Temperamento-Infantil · Los datos de este reporte viven únicamente en el dispositivo de origen.</div>`;
+    <div class="rep-foot">Generado con la Conociéndonos · lalitoelprofefulanito-dot.github.io/Bitacora-Temperamento-Infantil · Los datos de este reporte viven únicamente en el dispositivo de origen.</div>`;
 }
 function imprimirReporteCompleto(){
   $("#reporteImprimible").innerHTML = reporteHTML();
   window.print();
+}
+
+async function cargarHtml2Canvas(){
+  if(typeof html2canvas !== "undefined") return true;
+  if(!navigator.onLine) return false;
+  return await new Promise(resolve=>{
+    const sc=document.createElement("script");
+    sc.src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
+    sc.onload=()=>resolve(typeof html2canvas!=="undefined");
+    sc.onerror=()=>resolve(false);
+    document.head.appendChild(sc);
+  });
+}
+
+/* descarga la pantalla actual (header + vista activa) como imagen PNG en alta calidad,
+   igual que una captura de pantalla — excluye la barra de pestañas inferior, el propio
+   botón de descarga y cualquier overlay/reporte oculto */
+async function capturarVentana(nombreVista){
+  const canvasDisponible = await cargarHtml2Canvas();
+  if(!canvasDisponible){
+    avisar("La captura como imagen necesita un recurso externo y no está disponible sin conexión. La información sigue disponible: puedes usar la opción de imprimir o guardar en PDF desde Perfil.");
+    return;
+  }
+  const shot = $("#shot");
+  if(shot) shot.classList.add("working");
+  try{
+    const canvas = await html2canvas(document.body, {
+      useCORS: true,
+      scale: 2,
+      backgroundColor: "#F2F0EB",
+      ignoreElements: (elemento)=> elemento.matches && elemento.matches("nav.tabs, #overlay, #reporteImprimible, .shot"),
+    });
+    const a = document.createElement("a");
+    a.download = `Bitácora ${nombreVista} ${fechaCorta()}.png`;
+    a.href = canvas.toDataURL("image/png");
+    document.body.appendChild(a); a.click(); a.remove();
+  }catch(e){
+    console.warn("No se pudo generar la imagen:", e);
+    avisar("No se pudo generar la imagen. Intenta de nuevo.");
+  }finally{
+    if(shot) shot.classList.remove("working");
+  }
 }
 
 /* ─────────── redacción narrativa (para compartir con un profesionista) ─────────── */
@@ -2105,7 +2682,8 @@ function generarNarrativa(){
     const p = promedio(r.id), rg = rango(r.id);
     t += `${r.nombre}: promedio ${p.toFixed(1)} de 10${rg?`, con un rango de ${rg[0]} a ${rg[1]} según el contexto`:""}, en ${lista.length} episodio${lista.length>1?"s":""} registrado${lista.length>1?"s":""}.\n`;
     lista.slice().sort((a,b)=>a.fecha<b.fecha?1:-1).forEach(e=>{
-      t += `  · ${e.fecha} — ${e.situacion||"(sin descripción)"} (puntuación ${e.puntuacion}${e.divergio?", fuera de la banda que sugería el dato observado":""})${e.extra?`: ${e.extra}`:""}\n`;
+      const contextoTxt = ((e.contexto&&e.contexto.length)?e.contexto.join("; "):"") + (e.contextoOtro?`${e.contexto&&e.contexto.length?"; ":""}${e.contextoOtro}`:"");
+      t += `  · ${e.fecha} — ${e.situacion||"(sin descripción)"} (puntuación ${e.puntuacion}${e.divergio?", fuera de la banda que sugería el dato observado":""})${e.extra?`: ${e.extra}`:""}${contextoTxt?`\n    Contexto: ${contextoTxt}`:""}\n`;
     });
     t += `\n`;
   });
@@ -2238,24 +2816,130 @@ function mostrarRestaurar(){
     let datos;
     try{ datos = JSON.parse(bruto); }catch(e){ datos = null; }
     if(!datos || typeof datos!=="object" || !Array.isArray(datos.episodios)){
-      alert("No se pudo leer ese respaldo. Revisa que sea el archivo o texto correcto (el que descargaste con \"Copiar/descargar respaldo\" o el que se generó al exportar para un profesionista)."); return;
+      avisar("No se pudo leer ese respaldo. Revisa que sea el archivo o texto correcto (el que descargaste con \"Descargar respaldo (JSON)\" o el que se generó al exportar para un profesionista)."); return;
     }
-    const escrito = prompt("Esto reemplaza TODOS los datos actuales de este dispositivo por los del respaldo.\n\nEscribe RESTAURAR para confirmar:");
-    if(escrito && escrito.trim().toLowerCase()==="restaurar"){
-      S = Object.assign(S, migrar(datos)); save(); overlayHide(); ir("rasgos");
-    }
+    confirmarConTexto(
+      "Esto reemplaza TODOS los datos actuales de este dispositivo por los del respaldo.\n\nEscribe RESTAURAR para confirmar:",
+      "RESTAURAR",
+      ()=>{ S = Object.assign(S, migrar(datos)); save(); ir("rasgos"); }
+    );
   };
 }
 
+/* ─────────── avisos y confirmaciones propios de la app (no usan alert/confirm/prompt nativos:
+   esas funciones del navegador se bloquean en silencio dentro de iframes con sandbox restringido,
+   como el que usa Google Sites al incrustar la app — por eso los reemplazamos aquí) ─────────── */
+function avisar(mensaje){
+  overlayShow(`
+    <div class="eyebrow">Aviso</div>
+    <p style="font-size:14px; line-height:1.5">${esc(mensaje)}</p>
+    <button class="btn" id="av-ok" style="margin-top:14px">Entendido</button>`);
+  $("#av-ok").onclick = ()=>{ overlayHide(); render(); };
+}
+function confirmarConTexto(mensaje, palabraClave, onConfirmar){
+  overlayShow(`
+    <div class="eyebrow">Confirmación necesaria</div>
+    <p style="font-size:14px; line-height:1.5; white-space:pre-line">${esc(mensaje)}</p>
+    <input type="text" id="conf-texto" placeholder="Escribe ${esc(palabraClave)}" style="text-transform:uppercase">
+    <div class="sheet-actions" style="margin-top:16px">
+      <button class="skip" id="conf-no">Cancelar</button>
+      <button class="btn" id="conf-si" style="margin-top:0">Confirmar</button>
+    </div>`);
+  $("#conf-no").onclick = ()=>{ overlayHide(); render(); };
+  $("#conf-si").onclick = ()=>{
+    const escrito = ($("#conf-texto").value||"").trim().toLowerCase();
+    if(escrito === palabraClave.toLowerCase()){ overlayHide(); onConfirmar(); }
+    else avisar(`Escribiste algo distinto a "${palabraClave}", así que no se hizo ningún cambio. Inténtalo de nuevo si quieres continuar.`);
+  };
+}
+
+function construirReflexion(){
+  const eps = Array.isArray(S.episodios) ? S.episodios.slice() : [];
+  const ahora = new Date();
+  const limite = new Date(ahora.getTime() - 30*24*60*60*1000);
+  const recientes = eps.filter(e=>{ const d=new Date((e.fecha||"")+"T12:00:00"); return !isNaN(d) && d>=limite; });
+  const contar = (arr, getter)=>{
+    const m={}; arr.forEach(e=>{ (getter(e)||[]).forEach(x=>{ if(!x) return; m[x]=(m[x]||0)+1; }); });
+    return Object.entries(m).sort((a,b)=>b[1]-a[1]);
+  };
+  const contextos=contar(eps,e=>e.contexto);
+  const apoyos=contar(eps,e=>e.apoyos);
+  const situaciones={}; eps.forEach(e=>{const k=(e.situacion||"").trim(); if(k) situaciones[k]=(situaciones[k]||0)+1;});
+  const repetidas=Object.entries(situaciones).sort((a,b)=>b[1]-a[1]).filter(x=>x[1]>=2).slice(0,4);
+  const apoyoExitosos={};
+  eps.forEach(e=>{
+    if(!Array.isArray(e.apoyos)) return;
+    e.apoyos.forEach(a=>{ if(a) apoyoExitosos[a]=(apoyoExitosos[a]||[]); if(a) apoyoExitosos[a].push(e.puntuacion); });
+  });
+  const apoyosResumen=Object.entries(apoyoExitosos).map(([k,v])=>({k,n:v.length,p:v.reduce((a,b)=>a+b,0)/v.length})).sort((a,b)=>b.n-a.n).slice(0,4);
+  const funcionaron=S.micro.filter(m=>m.estado==='funciono');
+  const probadas=S.micro.filter(m=>['funciono','amedias','nofunciono'].includes(m.estado));
+  const porRasgo=RASGOS.map(r=>({r,p:promedio(r.id),n:eps.filter(e=>e.rasgo===r.id).length})).filter(x=>x.n);
+  const destacados=porRasgo.slice().sort((a,b)=>b.n-a.n).slice(0,3);
+  let tendencia="";
+  if(eps.length>=4){
+    const orden=eps.slice().sort((a,b)=>(a.fecha||"").localeCompare(b.fecha||""));
+    const mitad=Math.floor(orden.length/2); const a=orden.slice(0,mitad), b=orden.slice(mitad);
+    const prom=x=>x.length?x.reduce((s,e)=>s+Number(e.puntuacion||0),0)/x.length:null;
+    const pa=prom(a), pb=prom(b);
+    if(pa!=null&&pb!=null){ const d=pb-pa;
+      if(Math.abs(d)>=1) tendencia = d<0
+        ? `En los registros más recientes, las puntuaciones promedio son ${Math.abs(d).toFixed(1)} puntos menores que en la primera parte de tu historial.`
+        : `En los registros más recientes, las puntuaciones promedio son ${Math.abs(d).toFixed(1)} puntos mayores que en la primera parte de tu historial.`;
+    }
+  }
+  return {eps,recientes,contextos,apoyos,repetidas,apoyosResumen,funcionaron,probadas,destacados,tendencia};
+}
+
 function vPerfil(){
-  chrome("Perfil", S.nino.nombre || "Perfil temperamental", "Todos los ejes crecen hacia afuera", false);
+  chrome("Perfil", S.nino.nombre || "Patrones observados", "Lo observado hasta ahora, no una etiqueta fija", false, "Perfil");
   const el = $("#v-perfil"); el.classList.add("on");
   const vals = RASGOS.map(r=> promedio(r.id));
   const conDatos = vals.filter(v=>v!=null).length;
   el.innerHTML = `
+    <div class="card">
+      <div class="eyebrow">Accesibilidad y lectura</div>
+      <p class="a11y-note" style="margin-top:4px">Estas preferencias solo cambian cómo se ve la aplicación en este dispositivo. No modifican tus registros ni la puntuación.</p>
+      <div class="row2" style="margin-top:10px">
+        <button class="btn quiet sm" id="a11y-normal" aria-pressed="${!document.body.classList.contains("a11y-large")}">Texto normal</button>
+        <button class="btn quiet sm" id="a11y-large" aria-pressed="${document.body.classList.contains("a11y-large")}">Texto grande</button>
+        <button class="btn quiet sm" id="a11y-contrast" aria-pressed="${document.body.classList.contains("a11y-contrast")}">Alto contraste</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="eyebrow">Una idea para recordar</div>
+      <p style="margin:6px 0 0">Observar no significa culpar. Una reacción difícil no significa que tu hijo o hija esté mal, ni que tú estés criando mal. Busca qué condiciones ayudan, qué condiciones dificultan y qué pequeños ajustes vale la pena probar.</p>
+    </div>
+    ${(()=>{
+      const x=construirReflexion();
+      const ctxTop=x.contextos.slice(0,4), apoTop=x.apoyos.slice(0,4);
+      return `<div class="section-title">Reflexionar con el tiempo</div>
+      <div class="card">
+        <div class="eyebrow">🔎 ¿Qué patrones estamos encontrando?</div>
+        ${x.eps.length<3
+          ? `<p style="margin:7px 0 0">Todavía hay pocos registros para buscar patrones. No necesitas registrar todo: con el tiempo, las observaciones que ya tengas empezarán a mostrar qué situaciones se repiten.</p>`
+          : `<p style="margin:7px 0 12px">La aplicación no busca decidir qué significa una conducta. Agrupa tus propias observaciones para ayudarte a hacerte preguntas.</p>
+             ${x.repetidas.length?`<div class="pattern-list"><b>Situaciones que se repiten</b>${x.repetidas.map(([k,n])=>`<div class="pattern-item"><span>${esc(k)}</span><strong>${n} registros</strong></div>`).join("")}</div>`:`<p class="hint">Todavía no aparece una situación repetida con claridad.</p>`}
+             ${ctxTop.length?`<div class="pattern-list" style="margin-top:12px"><b>Contextos que aparecen con más frecuencia</b>${ctxTop.map(([k,n])=>`<div class="pattern-item"><span>${esc(k)}</span><strong>${n}</strong></div>`).join("")}</div>`:""}
+             ${x.tendencia?`<div class="diverge" style="margin-top:12px"><b>Una pista para mirar:</b> ${esc(x.tendencia)} Esto no demuestra una causa; solo compara los registros que tú has hecho.</div>`:""}`}
+        ${x.destacados.length?`<div class="pattern-list" style="margin-top:12px"><b>Rasgos con más registros</b>${x.destacados.map(o=>`<div class="pattern-item"><span>${esc(o.r.corto)}</span><strong>${o.n}</strong></div>`).join("")}<p class="hint" style="margin:7px 0 0">Tener más registros no significa que ese rasgo sea más importante; solo significa que lo has observado más veces.</p></div>`:""}
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="eyebrow">🧩 ¿Qué estrategias nos funcionan?</div>
+        ${x.funcionaron.length
+          ? `<p style="margin:7px 0 10px">Estas son las acciones que tú misma/o marcaste como útiles en casa. No son recetas universales: son pistas de lo que pareció funcionar en tu contexto.</p>${x.funcionaron.slice().reverse().slice(0,6).map(m=>`<div class="m-rep"><div class="r">${esc((rasgo(m.rasgo)||{}).corto||"Situación")}</div><div style="font-size:14px;line-height:1.5">${esc(m.texto)}</div></div>`).join("")}`
+          : `<p class="hint" style="margin:7px 0 0">Cuando pruebes una microacción y marques «Funcionó», aparecerá aquí. Esta será tu caja de herramientas propia.</p>`}
+        ${x.probadas.length?`<p class="hint" style="margin:10px 0 0">Hasta ahora has probado ${x.probadas.length} estrategia${x.probadas.length===1?"":"s"}; ${x.funcionaron.length} quedó${x.funcionaron.length===1?"":"aron"} marcada como útil.</p>`:""}
+      </div>
+      <div class="card" style="margin-top:14px">
+        <div class="eyebrow">💭 Una pregunta para la familia</div>
+        <p style="margin:7px 0 0"><b>¿Qué pequeño ajuste vale la pena probar la próxima vez?</b></p>
+        <p class="hint" style="margin:6px 0 0">No necesitas encontrar una respuesta perfecta. La idea es probar algo pequeño, observar qué ocurre y aprender de la experiencia.</p>
+      </div>`;
+    })()}
     <div class="radar-wrap">${radarSVG(vals)}</div>
     <p class="axis-note-legend" style="font-size:12px; color:var(--muted); margin:6px 4px 0">Toca un punto para ver su valor exacto.</p>
-    <p class="axis-note"><b>Cómo leerlo:</b> cada eje está nombrado por su polo alto. Un punto lejos del centro en «Adaptabilidad lenta» significa que le cuesta transitar; cerca del centro, que fluye con los cambios. La escala 1-10 cambia de dirección según el rasgo, así que la etiqueta —no el número— es lo que manda.</p>
+    <p class="axis-note"><b>Cómo leerlo:</b> esto representa observaciones registradas hasta ahora, no una característica fija ni un diagnóstico. Cada eje está nombrado por su polo alto. Un punto lejos del centro en «Adaptabilidad lenta» significa que le cuesta transitar; cerca del centro, que fluye con los cambios. La escala 1-10 cambia de dirección según el rasgo, así que la etiqueta —no el número— es lo que manda.</p>
     ${conDatos<9? `<div class="card" style="margin-top:14px"><p class="hint" style="margin:0">Tienes ${conDatos} de 9 rasgos con registros. Los ejes sin datos aparecen en el centro; no significan «bajo», significan «sin observar todavía».</p></div>`:""}
     <div class="section-title">Resumen por rasgo</div>
     <div class="card">
@@ -2268,8 +2952,55 @@ function vPerfil(){
           return `<tr><td>${esc(r.corto)}</td><td class="num">${p.toFixed(1)}</td><td class="num" style="font-size:12px">${rg[0]}–${rg[1]}</td><td>${esc(r.accion[b])}</td></tr>`;
         }).join("")}
       </table>
+      <p class="hint" style="margin:10px 0 0">${esc(verificarSinAgregacionGlobal().principio)}</p>
     </div>
-    <div class="section-title">Tu repertorio</div>
+    
+    ${RASGOS.filter(r => eps(r.id).length > 0).map(r => {
+      const rf = REFLEXIONES_RASGO[r.id];
+      if (!rf) return "";
+      return `<div class="card" style="margin:12px 0">
+        <div class="eyebrow">REFLEXIÓN · ${esc(r.corto.toUpperCase())}</div>
+        <p><b>${esc(rf.pregunta)}</b></p>
+        ${rf.hints.map(h => `<p class="hint">${h}</p>`).join("")}
+      </div>`;
+    }).join("")}
+
+    <p class="hint"><b>Importante:</b> una misma situación puede aportar información a más de un rasgo, pero no debe registrarse repetidamente para aumentar artificialmente su peso.</p>
+
+<div class="section-title">Lo que vamos aprendiendo</div>
+<div class="card">
+  ${(()=>{
+    const eps = episodiosConContexto();
+    const rf = reflexionConectada();
+    const estr = estrategiasFuncionaron();
+    if(!eps.length && !estr.length){
+      return `<p class="hint" style="margin:0">
+        Cuando agregues contexto, apoyos o una microacción marcada como «funcionó»,
+        aquí podrás ver cómo se conectan tus observaciones.
+      </p>`;
+    }
+    const c = rf.contextos.length
+      ? rf.contextos.map(([k,n])=>`<li><b>${esc(k)}</b> · ${n} registro${n===1?"":"s"}</li>`).join("")
+      : `<li>Aún no hay suficientes contextos registrados.</li>`;
+    const a = rf.apoyos.length
+      ? rf.apoyos.map(([k,n])=>`<li><b>${esc(k)}</b> · ${n} registro${n===1?"":"s"}</li>`).join("")
+      : `<li>Aún no hay apoyos registrados.</li>`;
+    return `
+      <p style="margin-top:0"><b>Lo que aparece con más frecuencia:</b></p>
+      <div class="hint"><b>Contextos</b><ul style="margin:6px 0 0 18px">${c}</ul></div>
+      <div class="hint" style="margin-top:10px"><b>Apoyos registrados</b><ul style="margin:6px 0 0 18px">${a}</ul></div>
+      <p class="hint" style="margin:12px 0 0">
+        Estas coincidencias describen tus registros; <b>no demuestran una causa</b>.
+        Úsalas como pistas para decidir qué observar la próxima vez.
+      </p>
+      ${estr.length ? `<div class="flow-note" style="margin-top:12px">
+        <b>Tu repertorio que ha funcionado:</b> ${estr.map(m=>esc(m.texto)).join(" · ")}
+      </div>` : ""}
+    `;
+  })()}
+</div>
+
+<div class="section-title">Tu repertorio</div>
     <div class="card">
       ${(()=>{ const rep = S.micro.filter(m=>m.estado==="funciono");
         const probadas = S.micro.filter(m=>m.estado!=="pendiente" && m.estado!=="soltada").length;
@@ -2309,11 +3040,11 @@ function vPerfil(){
       <button class="btn sm" id="irExportarProf" style="margin-top:0">📤 Exportar información a un profesionista</button>
     </div>
     <div class="card" style="margin-top:14px">
-      <div class="eyebrow">Tu voz nos importa</div>
+      <div class="eyebrow">Tu voz nos importa · envío opcional</div>
       <p class="hint" style="margin:0 0 10px">5 preguntas breves sobre cómo te ha ido con la bitácora. No incluye datos de episodios — solo tu impresión general.</p>
       <button class="btn sm" id="irFeedback" style="margin-top:0">🤝 Compartir mi feedback</button>
     </div>
-    <div class="foot">Este instrumento facilita la observación doméstica. <b>No diagnostica</b> y no reemplaza una evaluación profesional. Si algo de lo que observas te preocupa, compártelo con el pediatra, la escuela o un especialista.</div>`;
+    <div class="foot">Esta herramienta facilita la observación familiar. <b>No diagnostica</b>, no etiqueta y no reemplaza una evaluación profesional. La intención es ayudarte a observar patrones para ajustar el acompañamiento y el entorno. Si algo de lo que observas te preocupa, compártelo con el pediatra, la escuela o un especialista.</div>`;
 
   // tooltip táctil/teclado del radar: al tocar o enfocar un punto, muestra su valor exacto
   const tip = el.querySelector("#radar-tip");
@@ -2356,11 +3087,15 @@ function vPerfil(){
   $("#irFeedback").onclick = ()=>{ ctx.volverA = "perfil"; ir("feedback"); };
   $("#irExportarProf").onclick = ()=> mostrarExportarProfesionista();
   $("#reset").onclick = ()=>{
-    const escrito = prompt("Esto borra TODOS los registros de este dispositivo y no se puede deshacer.\n\nSi tienes datos que te importan, usa antes \"Copiar respaldo (JSON)\".\n\nEscribe BORRAR para confirmar:");
-    if(escrito && escrito.trim().toLowerCase() === "borrar"){
-      S = {version:SCHEMA_VERSION, nino:{nombre:"",edad:"",etapa:""}, episodios:[], adulto:{}, umbrales:{}, micro:[], legalAceptado:S.legalAceptado, onboardingVisto:S.onboardingVisto};
-      save(); ir("rasgos");
-    }
+    confirmarConTexto(
+      "Esto borra TODOS los registros de este dispositivo y no se puede deshacer.\n\nSi tienes datos que te importan, usa antes \"Descargar respaldo (JSON)\".\n\nEscribe BORRAR para confirmar:",
+      "BORRAR",
+      ()=>{
+        S = {version:SCHEMA_VERSION, nino:{nombre:"",edad:"",etapa:""}, episodios:[], adulto:{}, umbrales:{}, micro:[], preferencias:{textoGrande:false, altoContraste:false}, legalAceptado:S.legalAceptado, onboardingVisto:S.onboardingVisto};
+        aplicarPreferencias();
+        save(); ir("rasgos");
+      }
+    );
   };
 }
 
@@ -2410,7 +3145,7 @@ const ONBOARD = [
     ["Registra","Cuánto duró y qué viste, con tus propias palabras."],
     ["Reflexiona","Dos preguntas de contexto y una pauta te ayudan a decidir tú la puntuación final."]]},
   {icono:"⌂", titulo:"Tus datos, en tu teléfono",
-   texto:"Todo se guarda únicamente en este dispositivo: no hay cuenta ni nube. Si cierras la app, tus registros siguen ahí. Si borras los datos de la app o la desinstalas, se pierden para siempre — puedes copiar un respaldo desde Perfil cuando quieras."},
+   texto:"La bitácora puede seguir utilizándose sin internet una vez cargada. Todo se guarda únicamente en este dispositivo: no hay cuenta ni nube. Si cierras la app, tus registros siguen ahí. Si borras los datos de la app o la desinstalas, se pierden para siempre — puedes copiar un respaldo desde Perfil cuando quieras."},
   {icono:"i", titulo:"Sobre este instrumento",
    texto:"Basado en Thomas & Chess (1956) y en la adaptación de Andrea Cardemil Ricke (Apego seguro, 2017). Operacionalización: Prof. Eduardo Kantún Martínez. Es una herramienta reflexiva para familias, no un instrumento clínico."}
 ];
@@ -2422,8 +3157,8 @@ function showLegal(revisita){
   overlayShow(`
     <div class="eyebrow">Antes de empezar</div>
     <h2 id="sheetTitle">Aviso</h2>
-    <p><b>Bitácora Reflexiva del Temperamento</b> no es un test ni un diagnóstico. Es una herramienta de observación para entender mejor las reacciones de tu hijo o hija y ajustar el entorno, no para etiquetarlo. Las bandas y promedios son solo una referencia: la puntuación final siempre la decides tú.</p>
-    <p>Tus datos se guardan únicamente en este dispositivo, sin cuenta ni nube. Si cierras la app se conservan; si borras los datos o desinstalas, se pierden para siempre. Puedes copiar un respaldo desde Perfil.</p>
+    <p><b>Conociéndonos</b> no es un test ni un diagnóstico. Es una herramienta de observación para entender mejor las reacciones de tu hijo o hija y ajustar el entorno, no para etiquetarlo. Las bandas y promedios son solo una referencia: la puntuación final siempre la decides tú.</p>
+    <p>Tus registros de la bitácora se guardan únicamente en este dispositivo, sin cuenta ni nube. La aplicación puede seguir utilizándose sin internet una vez cargada en el navegador. Si cierras la app se conservan; si borras los datos o desinstalas, se pierden para siempre. Puedes copiar un respaldo desde Perfil. <b>Enviar feedback es una acción separada y voluntaria:</b> cuando lo envías, salen del dispositivo tus respuestas sobre la experiencia de uso.</p>
     <p>Si algo de lo que observas te preocupa, consúltalo con el pediatra, la escuela o un especialista.</p>
     <button class="btn" id="ob-ok">Entendido</button>`);
   $("#ob-ok").onclick = ()=>{
@@ -2543,6 +3278,7 @@ function showMicroOferta(ep, aviso){
 /* ─────────── arranque ─────────── */
 function render(){
   if(vista==="rasgos") vRasgos();
+  else if(vista==="rapido") vRapido();
   else if(vista==="rasgo") vRasgo();
   else if(vista==="form") vForm();
   else if(vista==="espejo") vEspejo();
@@ -2551,11 +3287,15 @@ function render(){
 }
 (async function init(){
   const saved = migrar(await store.get());
-  if(saved) S = Object.assign(S, saved);
+  if(saved){
+    S = Object.assign(S, saved);
+  }else{
+    await save();
+  }
+  aplicarPreferencias();
   render();
   if(!S.legalAceptado) showLegal(false);
   else if(!S.onboardingVisto) showOnboarding(0, false);
-  setTimeout(feedbackReintentarPendientes, 2500);
 })();
 
 /* registro del Service Worker: solo funciona serví­do por https:// o localhost.

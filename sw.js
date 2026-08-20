@@ -1,50 +1,71 @@
-/* Service Worker de la Bitácora Reflexiva del Temperamento.
-   Sube este número (v1 -> v2 -> v3...) cada vez que subas una versión
-   nueva de index.html a GitHub: es la única forma en que los
-   teléfonos que ya instalaron la app se enteran de que hay cambios. */
-const CACHE_NAME = "bitacora-temperamento-v1";
+/* Service Worker de CONOCIÉNDONOS.
+   Objetivo: una vez que la familia abrió la app una vez con conexión,
+   pueda registrar, revisar y reflexionar sin internet.
+   No cachea el envío de feedback (POST): eso siempre necesita conexión
+   y ya se marca así en la interfaz.
 
-const ARCHIVOS_DE_LA_APP = [
+   IMPORTANTE al publicar una nueva versión de index.html:
+   sube en 1 el número de CACHE_VERSION de la línea siguiente.
+   Eso obliga a los teléfonos que ya tienen la app instalada a bajar
+   los archivos nuevos en vez de seguir usando la copia guardada. */
+const CACHE_VERSION = 1;
+const CACHE_NAME = "conociendonos-v" + CACHE_VERSION;
+
+const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png",
-  "./icon-maskable-192.png",
-  "./icon-maskable-512.png"
+  "./icon-512-maskable.png"
 ];
 
-/* Instalación: descarga y guarda una copia de cada archivo de la app. */
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ARCHIVOS_DE_LA_APP))
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
-/* Activación: borra copias de versiones anteriores para no acumular basura. */
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(nombres =>
-      Promise.all(nombres.filter(n => n !== CACHE_NAME).map(n => caches.delete(n)))
-    )
+      Promise.all(
+        nombres
+          .filter(n => n !== CACHE_NAME)
+          .map(n => caches.delete(n))
+      )
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-/* Cada vez que la app pide un archivo:
-   1) intenta traerlo de internet y actualiza la copia guardada (para que,
-      si hay señal, la familia siempre vea la versión más reciente);
-   2) si no hay internet, entrega la copia guardada sin fallar. */
 self.addEventListener("fetch", event => {
-  if(event.request.method !== "GET") return;
+  const req = event.request;
+
+  // Solo interceptamos GET. El envío de feedback (POST) y cualquier otra
+  // escritura siempre pasan directo a la red, sin pasar por caché.
+  if (req.method !== "GET") return;
+
+  // Peticiones a otros orígenes (por ejemplo, el servicio de feedback)
+  // no se cachean: se dejan pasar tal cual a la red.
+  if (new URL(req.url).origin !== self.location.origin) return;
+
   event.respondWith(
-    fetch(event.request)
-      .then(respuesta => {
-        const copia = respuesta.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copia));
-        return respuesta;
-      })
-      .catch(() => caches.match(event.request).then(r => r || caches.match("./index.html")))
+    caches.match(req).then(cached => {
+      const enRed = fetch(req)
+        .then(res => {
+          if (res && res.status === 200) {
+            const copia = res.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(req, copia));
+          }
+          return res;
+        })
+        .catch(() => cached); // sin conexión: usa lo que ya está guardado
+
+      // Si ya hay una copia local, se muestra de inmediato (rápido y
+      // funciona sin internet) y de paso se actualiza en segundo plano.
+      return cached || enRed;
+    })
   );
 });
