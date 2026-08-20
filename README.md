@@ -1,4 +1,5 @@
-# Bitácora Reflexiva del Temperamento Infantil
+# Conociéndonos
+### Una guía para comprender y acompañar
 
 Herramienta web de observación del temperamento infantil basada en el modelo de **Thomas & Chess** (New York Longitudinal Study, 1956), operacionalizada para hogares hispanohablantes por **Prof. Eduardo Kantún Martínez**.
 
@@ -22,8 +23,9 @@ Una bitácora para que padres, madres y cuidadores registren episodios cotidiano
 ## Técnica
 
 - Sin backend, sin base de datos, sin cuentas.
-- Service Worker: abre offline una vez guardada.
+- Service Worker con caché de la aplicación completa: instálala una vez con internet y después funciona sin conexión.
 - Datos en IndexedDB con fallback a localStorage.
+- Preferencias de accesibilidad (texto grande, alto contraste) guardadas en tu dispositivo.
 - Ícono táctil y accesible en todos los navegadores.
 
 ## Autoría
