@@ -123,6 +123,9 @@ input:focus,textarea:focus,select:focus,button:focus-visible{outline:2px solid v
   padding:14px; font-size:15px; font-weight:600; margin-top:18px}
 .btn.ghost{background:transparent; color:var(--jade); border:1px solid var(--jade); margin-top:10px}
 .btn.quiet{background:transparent; color:var(--muted); border:1px solid var(--line); font-weight:500}
+.btn.sm{padding:10px 12px; font-size:13.5px; margin-top:8px; border-radius:10px}
+.row2{display:flex; gap:8px}
+.row2 .btn{margin-top:0}
 .btn[disabled]{opacity:.4}
 
 /* suggested band readout */
@@ -211,6 +214,19 @@ details .inner{font-size:13px; color:var(--ink-2); line-height:1.55; margin-top:
 .sheet-actions .skip{background:none; border:0; color:var(--muted); font-size:13.5px; padding:14px 6px}
 .sheet-actions .btn{margin-top:0; flex:1}
 @media print{nav.tabs,.btn,.back{display:none}}
+#reporteImprimible{display:none}
+@media print{
+  body *{visibility:hidden}
+  #reporteImprimible, #reporteImprimible *{visibility:visible}
+  #reporteImprimible{display:block; position:absolute; top:0; left:0; width:100%; padding:24px; color:#132A2E}
+  #reporteImprimible h1{font-size:22px; margin:0 0 4px}
+  #reporteImprimible h2{font-size:16px; margin:22px 0 8px; border-bottom:1px solid #DDD9D0; padding-bottom:4px}
+  #reporteImprimible .rep-rasgo{margin-bottom:14px; page-break-inside:avoid}
+  #reporteImprimible .rep-ep{font-size:12.5px; color:#26454A; margin:2px 0 2px 12px}
+  #reporteImprimible table{width:100%; border-collapse:collapse; font-size:12.5px}
+  #reporteImprimible th, #reporteImprimible td{border:1px solid #DDD9D0; padding:5px 8px; text-align:left}
+  #reporteImprimible .rep-foot{margin-top:18px; font-size:11px; color:#596C6F}
+}
 @media (prefers-reduced-motion:no-preference){.view.on{animation:fade .18s ease-out}}
 @keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
 .back{background:none;border:0;color:#A9C2BB;font-size:13px;padding:0 0 8px;font-family:var(--sans)}
@@ -241,6 +257,7 @@ details .inner{font-size:13px; color:var(--ink-2); line-height:1.55; margin-top:
 </nav>
 
 <div id="overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="sheetTitle"></div>
+<div id="reporteImprimible" aria-hidden="true"></div>
 
 <script>
 /* ─────────── datos del instrumento (trasladados del Excel v1.0) ─────────── */
@@ -2030,6 +2047,206 @@ function vFeedback(){
   };
 }
 
+/* ─────────── reporte completo para imprimir / PDF (rasgos + espejo + perfil) ─────────── */
+function reporteHTML(){
+  const fechaHoy = new Date().toLocaleDateString("es-MX", {year:"numeric", month:"long", day:"numeric"});
+  const rasgosConDatos = RASGOS.filter(r=> eps(r.id).length>0);
+  const rasgosSinDatos = RASGOS.filter(r=> eps(r.id).length===0);
+  return `
+    <h1>Bitácora Reflexiva del Temperamento</h1>
+    <p>${esc(S.nino.nombre||"(sin nombre)")} · ${esc(S.nino.edad||"edad no especificada")} · Reporte generado el ${fechaHoy}</p>
+    <p style="font-size:12px">Este documento proviene de observación doméstica. No es un instrumento de diagnóstico ni sustituye una evaluación profesional.</p>
+
+    <h2>Rasgos registrados</h2>
+    ${rasgosConDatos.length? rasgosConDatos.map(r=>{
+      const p = promedio(r.id), rg = rango(r.id);
+      return `<div class="rep-rasgo">
+        <b>${esc(r.nombre)}</b> — promedio ${p.toFixed(1)}${rg? ` · rango ${rg[0]}–${rg[1]}`:""} · ${eps(r.id).length} registro${eps(r.id).length>1?"s":""}
+        ${eps(r.id).slice().sort((a,b)=>a.fecha<b.fecha?1:-1).map(e=>
+          `<div class="rep-ep">${e.fecha} — ${esc(e.situacion||"(sin descripción)")} · puntuación ${e.puntuacion}${e.divergio?" (se apartó de la banda sugerida)":""}${e.extra?`<br><i>${esc(e.extra)}</i>`:""}</div>`
+        ).join("")}
+      </div>`;
+    }).join("") : "<p>Sin registros todavía.</p>"}
+    ${rasgosSinDatos.length? `<p style="font-size:12px">Sin registros aún: ${rasgosSinDatos.map(r=>esc(r.corto)).join(", ")}.</p>` : ""}
+
+    <h2>Bitácora espejo (autopercepción del adulto)</h2>
+    <table>
+      <tr><th>Rasgo</th><th>Adulto</th><th>Niño/a (promedio)</th><th>Zona</th></tr>
+      ${RASGOS.map(r=>{
+        const a = S.adulto[r.id], p = promedio(r.id);
+        if(a==null || p==null) return `<tr><td>${esc(r.corto)}</td><td>${a??"—"}</td><td>${p!=null?p.toFixed(1):"—"}</td><td>Faltan datos</td></tr>`;
+        const d = Math.abs(a-p);
+        const z = d<=3 ? "Temperamentos parecidos" : d<=6 ? "Brecha moderada" : "Brecha amplia";
+        return `<tr><td>${esc(r.corto)}</td><td>${a}</td><td>${p.toFixed(1)}</td><td>${z}</td></tr>`;
+      }).join("")}
+    </table>
+
+    <h2>Perfil</h2>
+    <p>Nombre o apodo: ${esc(S.nino.nombre||"—")}<br>Edad o etapa: ${esc(S.nino.edad||"—")}</p>
+
+    <div class="rep-foot">Generado con la Bitácora Reflexiva del Temperamento · lalitoelprofefulanito-dot.github.io/Bitacora-Temperamento-Infantil · Los datos de este reporte viven únicamente en el dispositivo de origen.</div>`;
+}
+function imprimirReporteCompleto(){
+  $("#reporteImprimible").innerHTML = reporteHTML();
+  window.print();
+}
+
+/* ─────────── redacción narrativa (para compartir con un profesionista) ─────────── */
+function generarNarrativa(){
+  const fechaHoy = new Date().toLocaleDateString("es-MX", {year:"numeric", month:"long", day:"numeric"});
+  let t = `BITÁCORA REFLEXIVA DEL TEMPERAMENTO — RESUMEN NARRATIVO\n`;
+  t += `Generado el ${fechaHoy}\n\n`;
+  t += `Niño o niña: ${S.nino.nombre||"(sin nombre)"}\nEdad: ${S.nino.edad||"no especificada"}\n\n`;
+  t += `Este resumen proviene de observación doméstica registrada por la familia con una herramienta basada en el modelo de Thomas & Chess (1956). No es un instrumento de diagnóstico ni sustituye una evaluación profesional; se comparte como insumo para orientar, con mayor precisión, el trabajo de seguimiento.\n\n`;
+  t += `── RASGOS OBSERVADOS ──\n\n`;
+  RASGOS.forEach(r=>{
+    const lista = eps(r.id);
+    if(!lista.length) return;
+    const p = promedio(r.id), rg = rango(r.id);
+    t += `${r.nombre}: promedio ${p.toFixed(1)} de 10${rg?`, con un rango de ${rg[0]} a ${rg[1]} según el contexto`:""}, en ${lista.length} episodio${lista.length>1?"s":""} registrado${lista.length>1?"s":""}.\n`;
+    lista.slice().sort((a,b)=>a.fecha<b.fecha?1:-1).forEach(e=>{
+      t += `  · ${e.fecha} — ${e.situacion||"(sin descripción)"} (puntuación ${e.puntuacion}${e.divergio?", fuera de la banda que sugería el dato observado":""})${e.extra?`: ${e.extra}`:""}\n`;
+    });
+    t += `\n`;
+  });
+  t += `── BITÁCORA ESPEJO (cómo se percibe el adulto a sí mismo en los mismos rasgos) ──\n\n`;
+  RASGOS.forEach(r=>{
+    const a = S.adulto[r.id], p = promedio(r.id);
+    if(a==null) return;
+    t += `${r.corto}: adulto se ubica en ${a} de 10`;
+    if(p!=null){
+      const d = Math.abs(a-p);
+      const z = d<=3 ? "temperamentos parecidos" : d<=6 ? "brecha moderada" : "brecha amplia";
+      t += `, frente a un promedio de ${p.toFixed(1)} en el niño o niña (${z}).`;
+    }
+    t += `\n`;
+  });
+  t += `\nEste documento fue generado automáticamente a partir de los registros de la familia; el texto de cada episodio fue escrito por quien lo observó, no por la aplicación.\n`;
+  return t;
+}
+
+function textoAutorizacion(){
+  return `AUTORIZACIÓN PARA COMPARTIR INFORMACIÓN\n\n`+
+    `Yo, _______________________________________ (nombre de quien autoriza, madre/padre/tutor),\n`+
+    `autorizo a _______________________________________ (nombre del profesionista),\n`+
+    `con cédula profesional _______________________________________,\n`+
+    `a conocer y hacer uso de la información contenida en este documento para _______________________________________ (motivo),\n`+
+    `en relación con _______________________________________ (situación o causa).\n\n`+
+    `Fecha: _______________________          Firma: _______________________\n\n`+
+    `Nota: este es un formato base de autorización, no una plantilla revisada legalmente. Para procesos formales (dictámenes, procesos legales), se recomienda validarlo con asesoría legal.`;
+}
+
+async function mostrarExportarProfesionista(){
+  overlayShow(`
+    <div class="eyebrow">Antes de continuar</div>
+    <h2 id="sheetTitle">Vas a compartir esta información con alguien más</h2>
+    <p style="font-size:14px; line-height:1.5">Se va a preparar un documento de texto con el resumen y la autorización, listo para copiar a Word o para adjuntar tal cual. Tú decides, en el siguiente paso, a través de qué app enviarlo — nada se manda automáticamente todavía.</p>
+    <div class="sheet-actions" style="margin-top:16px">
+      <button class="skip" id="ep-no">Cancelar</button>
+      <button class="btn" id="ep-si" style="margin-top:0">Continuar</button>
+    </div>`);
+  $("#ep-no").onclick = ()=>{ overlayHide(); render(); };
+  $("#ep-si").onclick = async ()=>{
+    overlayHide();
+    const narrativa = generarNarrativa();
+    const autorizacion = textoAutorizacion();
+    const marcaInicio = "═══ COPIA DESDE AQUÍ ═══";
+    const marcaFin = "═══ HASTA AQUÍ ═══";
+    const instrucciones =
+      "Este documento resume la observación doméstica de tu hijo o hija, para compartir con un profesionista.\n\n" +
+      "Cómo usarlo — elige una opción:\n" +
+      `  • Copia el texto entre "${marcaInicio}" y "${marcaFin}", y pégalo en un documento de Word, Google Docs, o cualquier plantilla en línea — ahí completas a mano los espacios en blanco de la autorización.\n` +
+      "  • O, si el profesionista prefiere el archivo tal cual, adjunta o envía este mismo archivo de texto, sin copiar nada.\n";
+    const cuerpoCompleto = instrucciones + "\n" + marcaInicio + "\n\n" + narrativa + "\n\n" + autorizacion + "\n\n" + marcaFin + "\n";
+
+    const archivoNarrativa = new File([cuerpoCompleto], `Resumen para profesionista ${fechaCorta()}.txt`, {type:"text/plain"});
+
+    const hayWebShare = typeof navigator.share === "function";
+    const puedeCompartirArchivos = hayWebShare && navigator.canShare && navigator.canShare({ files:[archivoNarrativa] });
+
+    if(hayWebShare && puedeCompartirArchivos){
+      try{
+        await navigator.share({
+          title: "Bitácora del Temperamento — resumen para profesionista",
+          text: "Adjunto el resumen de la Bitácora del Temperamento, con espacio para autorización por escrito.",
+          files: [archivoNarrativa]
+        });
+        return; // la persona eligió una app y el sistema se encargó del envío
+      }catch(e){
+        if(e && e.name === "AbortError"){
+          // Canceló el panel de compartir a propósito: no forzamos descarga ni correo, simplemente no pasa nada más.
+          render();
+          return;
+        }
+        // Falla real (no cancelación): seguimos con la alternativa de escritorio, más abajo.
+      }
+    }
+
+    // Alternativa de escritorio o dispositivos sin panel nativo de compartir: UN solo archivo, UNA sola descarga.
+    // (El respaldo técnico JSON es un archivo aparte — botón "Descargar respaldo (JSON)" arriba en Perfil — para
+    // que ningún botón de esta app dispare dos descargas seguidas: eso es lo que Chrome/Edge bloquean por seguridad.)
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(archivoNarrativa); a.download = archivoNarrativa.name;
+    document.body.appendChild(a); a.click(); a.remove();
+
+    const asunto = encodeURIComponent("Bitácora del Temperamento — resumen para profesionista");
+    const cuerpo = encodeURIComponent("Adjunto manualmente el archivo que se acaba de descargar (" + archivoNarrativa.name + ").");
+    window.location.href = `mailto:?subject=${asunto}&body=${cuerpo}`;
+    overlayShow(`
+      <div class="eyebrow">${hayWebShare? "Tu navegador no puede adjuntar este archivo" : "Tu navegador no tiene panel para compartir"}</div>
+      <h2 id="sheetTitle">Se descargó 1 archivo</h2>
+      <p style="font-size:14px">Se llama <b>${esc(archivoNarrativa.name)}</b>. Ábrelo y sigue las instrucciones que trae arriba: copiar a Word o adjuntar tal cual. Se abrió tu programa de correo — solo falta adjuntarlo a mano.</p>
+      <p class="hint" style="margin-top:10px">¿También necesitas el respaldo técnico (JSON) para el profesionista? Descárgalo aparte con el botón "Descargar respaldo (JSON)" en esta misma pantalla.</p>
+      <button class="btn" id="ep-ok" style="margin-top:14px">Entendido</button>`);
+    $("#ep-ok").onclick = ()=>{ overlayHide(); render(); };
+  };
+}
+
+/* ─────────── nombres de archivo amigables, con fecha, sin depender del nombre del niño ─────────── */
+function fechaCorta(){
+  const d = new Date();
+  const p = n => String(n).padStart(2,"0");
+  return `${p(d.getDate())}-${p(d.getMonth()+1)}-${d.getFullYear()}`;
+}
+function extraerJSON(texto){
+  if(!texto) return "";
+  const marca = texto.indexOf("RESPALDO COMPLETO EN FORMATO JSON");
+  const zona = marca>-1 ? texto.slice(marca) : texto;
+  const ini = zona.indexOf("{"), fin = zona.lastIndexOf("}");
+  return (ini>-1 && fin>ini) ? zona.slice(ini, fin+1) : texto.trim();
+}
+function mostrarRestaurar(){
+  overlayShow(`
+    <div class="eyebrow">Solo para este dispositivo</div>
+    <h2 id="sheetTitle">Restaurar desde un respaldo</h2>
+    <p style="font-size:14px; line-height:1.5">Usa el archivo que descargaste con "Copiar/descargar respaldo" antes de cambiar o formatear tu teléfono. Esto <b>reemplaza</b> los datos que haya ahora mismo en este dispositivo.</p>
+    <label class="f">Sube el archivo</label>
+    <input type="file" id="restore-file" accept=".json,.txt">
+    <label class="f" style="margin-top:10px">O pega aquí el contenido</label>
+    <textarea id="restore-json" placeholder="Pega el respaldo completo…" style="min-height:120px"></textarea>
+    <div class="sheet-actions" style="margin-top:16px">
+      <button class="skip" id="restore-no">Cancelar</button>
+      <button class="btn" id="restore-si" style="margin-top:0">Restaurar</button>
+    </div>`);
+  $("#restore-no").onclick = ()=>{ overlayHide(); render(); };
+  $("#restore-file").onchange = async e=>{
+    const f = e.target.files[0]; if(!f) return;
+    $("#restore-json").value = extraerJSON(await f.text());
+  };
+  $("#restore-si").onclick = ()=>{
+    const bruto = extraerJSON($("#restore-json").value);
+    let datos;
+    try{ datos = JSON.parse(bruto); }catch(e){ datos = null; }
+    if(!datos || typeof datos!=="object" || !Array.isArray(datos.episodios)){
+      alert("No se pudo leer ese respaldo. Revisa que sea el archivo o texto correcto (el que descargaste con \"Copiar/descargar respaldo\" o el que se generó al exportar para un profesionista)."); return;
+    }
+    const escrito = prompt("Esto reemplaza TODOS los datos actuales de este dispositivo por los del respaldo.\n\nEscribe RESTAURAR para confirmar:");
+    if(escrito && escrito.trim().toLowerCase()==="restaurar"){
+      S = Object.assign(S, migrar(datos)); save(); overlayHide(); ir("rasgos");
+    }
+  };
+}
+
 function vPerfil(){
   chrome("Perfil", S.nino.nombre || "Perfil temperamental", "Todos los ejes crecen hacia afuera", false);
   const el = $("#v-perfil"); el.classList.add("on");
@@ -2074,17 +2291,27 @@ function vPerfil(){
         </div>`;}).join("")}
     </div>
     <div class="card">
-      <div class="warn">Los datos viven solo en este dispositivo. No hay cuenta, servidor ni copia en la nube: si borras la app o los datos del navegador, se pierden. Guarda un respaldo de vez en cuando.</div>
-      <button class="btn ghost" id="exp">Copiar respaldo (JSON)</button>
-      <button class="btn quiet" id="print">Imprimir o guardar en PDF</button>
-      <button class="btn quiet" id="verOnb">Cómo funciona (ver de nuevo)</button>
-      <button class="btn quiet" id="verLegal">Aviso legal</button>
-      <button class="btn quiet" id="reset">Borrar todos los datos</button>
+      <div class="eyebrow">Tus datos, en este dispositivo</div>
+      <div class="warn" style="margin-top:8px">Sin cuenta ni nube: si borras la app o los datos del navegador, se pierden. Guarda un respaldo de vez en cuando.</div>
+      <button class="btn ghost sm" id="exp" style="margin-top:10px">Descargar respaldo (JSON)</button>
+      <button class="btn quiet sm" id="restaurar">Restaurar desde un respaldo</button>
+      <p class="hint" style="margin:6px 2px 10px">Guárdalo en Google Drive, OneDrive, o mándatelo por correo — así no lo pierdes si formateas el teléfono o cambias de celular. Trae las tres secciones (rasgos, espejo y perfil); con "Restaurar" lo regresas a cualquier dispositivo.</p>
+      <button class="btn quiet sm" id="print">Imprimir o guardar en PDF (rasgos + espejo + perfil)</button>
+      <div class="row2" style="margin-top:8px">
+        <button class="btn quiet sm" id="verOnb">Cómo funciona</button>
+        <button class="btn quiet sm" id="verLegal">Aviso legal</button>
+      </div>
+      <button class="btn quiet sm" id="reset" style="color:#8A4B1F">Borrar todos los datos</button>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="eyebrow">Para un profesionista externo — un envío puntual</div>
+      <p class="hint" style="margin:6px 0 10px">Distinto del respaldo de arriba: esto arma un documento de texto redactado (no un archivo técnico) para compartir una sola vez con un terapeuta, psicólogo u otro especialista — con espacio para autorización por escrito, y marcado para copiar directo a Word si lo prefieres.</p>
+      <button class="btn sm" id="irExportarProf" style="margin-top:0">📤 Exportar información a un profesionista</button>
     </div>
     <div class="card" style="margin-top:14px">
       <div class="eyebrow">Tu voz nos importa</div>
       <p class="hint" style="margin:0 0 10px">5 preguntas breves sobre cómo te ha ido con la bitácora. No incluye datos de episodios — solo tu impresión general.</p>
-      <button class="btn" id="irFeedback" style="margin-top:0">🤝 Compartir mi feedback</button>
+      <button class="btn sm" id="irFeedback" style="margin-top:0">🤝 Compartir mi feedback</button>
     </div>
     <div class="foot">Este instrumento facilita la observación doméstica. <b>No diagnostica</b> y no reemplaza una evaluación profesional. Si algo de lo que observas te preocupa, compártelo con el pediatra, la escuela o un especialista.</div>`;
 
@@ -2114,13 +2341,20 @@ function vPerfil(){
     u[+i.dataset.i] = Number(i.value); S.umbrales[r.id] = u; save(); vPerfil();
   });
   $("#exp").onclick = async ()=>{
-    try{ await navigator.clipboard.writeText(JSON.stringify(S)); $("#exp").textContent = "Respaldo copiado"; }
-    catch(e){ $("#exp").textContent = "No se pudo copiar en este navegador"; }
+    const contenido = JSON.stringify(S, null, 2);
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([contenido], {type:"application/json"}));
+    a.download = `Respaldo de tu bitácora ${fechaCorta()}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    try{ await navigator.clipboard.writeText(contenido); $("#exp").textContent = "Descargado y copiado ✓"; }
+    catch(e){ $("#exp").textContent = "Respaldo descargado ✓"; }
   };
-  $("#print").onclick = ()=> window.print();
+  $("#restaurar").onclick = ()=> mostrarRestaurar();
+  $("#print").onclick = ()=> imprimirReporteCompleto();
   $("#verOnb").onclick = ()=> showOnboarding(0, true);
   $("#verLegal").onclick = ()=> showLegal(true);
   $("#irFeedback").onclick = ()=>{ ctx.volverA = "perfil"; ir("feedback"); };
+  $("#irExportarProf").onclick = ()=> mostrarExportarProfesionista();
   $("#reset").onclick = ()=>{
     const escrito = prompt("Esto borra TODOS los registros de este dispositivo y no se puede deshacer.\n\nSi tienes datos que te importan, usa antes \"Copiar respaldo (JSON)\".\n\nEscribe BORRAR para confirmar:");
     if(escrito && escrito.trim().toLowerCase() === "borrar"){
