@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Bitácora">
+<meta name="apple-mobile-web-app-title" content="Conociéndonos">
 <style>
 :root{
   --ink:#132A2E; --ink-2:#26454A; --muted:#596C6F;
@@ -46,6 +46,10 @@ body.a11y-large h2{font-size:26px}
 body.a11y-large .hint, body.a11y-large .foot{font-size:14px}
 body.a11y-contrast{--ink:#000;--ink-2:#111;--muted:#333;--paper:#fff;--surface:#fff;--line:#555;--jade:#075c42;--jade-soft:#e5f5ed}
 body.a11y-contrast .card, body.a11y-contrast .readout, body.a11y-contrast details{border-color:#555}
+/* Lectura sencilla: oculta texto de apoyo (explicaciones, subtítulos, matices) y deja solo lo imprescindible para registrar */
+body.a11y-simple .simple-hide{display:none !important}
+body.a11y-simple .quick-event small{display:none}
+body.a11y-simple .quick-event{padding:16px 12px}
 .a11y-note{font-size:13px;color:var(--muted);line-height:1.5}
 .connection-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;margin-top:6px;color:var(--muted)}
 .connection-status .dot{width:8px;height:8px;border-radius:50%;background:#2E6E5B;display:inline-block}
@@ -342,6 +346,10 @@ const RASGOS = [
       noConcluyas: "Que una reacción intensa significa que el niño es problemático, malcriado o incapaz de regularse.",
       proposito: "Identificar qué situaciones tienden a generar respuestas más intensas y qué condiciones ayudan a atravesarlas con mayor bienestar."
     },
+    espejo: {
+      moderada: "Si tú sueles reaccionar con calma y tu hijo o hija con mucha intensidad (o al revés), anticipa que tu propia reacción puede sentirse «poco creíble» o «excesiva» para el otro. Nombra en voz alta lo que sientes, en vez de solo mostrarlo: ayuda a que ambos se entiendan.",
+      amplia: "La distancia grande suele generar el pensamiento «¿por qué reacciona así por algo tan pequeño?» (o al revés). Antes de responder a la intensidad, valida primero: «veo que esto te movió mucho», y regula tu propio tono — tu calma no cancela lo que él o ella siente, pero sí cambia cómo se acompaña."
+    },
     situacionLabel: "Situación que provocó o acompañó la reacción",
     datoLabel: "Intensidad observada (1–10)",
     situaciones: [
@@ -425,6 +433,10 @@ const RASGOS = [
       noConcluyas: "Que buscar movimiento con frecuencia significa por sí mismo un problema de conducta o una condición clínica. No comparamos con otros niños ni tratamos una cantidad de movimiento como “normal” o “anormal”.",
       proposito: "Identificar qué combinación de movimiento, calma y condiciones del entorno favorece su participación y bienestar."
     },
+    espejo: {
+      moderada: "Si tu propio nivel de energía es distinto al suyo, la convivencia diaria («ya siéntate», «ya párate») puede sentirse como fricción constante aunque nadie esté haciendo nada mal. Prueba negociar bloques: tiempo de movimiento libre seguido de un bloque tranquilo, en vez de pedir quietud todo el rato.",
+      amplia: "Una brecha grande en el nivel de actividad suele traducirse en «me agota» o «me frustra que no se mueva» de ambos lados. No se trata de igualar el nivel de energía: se trata de dar salidas de movimiento planeadas para que la diferencia deje de vivirse como conflicto diario."
+    },
     situacionLabel: "Situación o actividad observada",
     datoLabel: "Tiempo aproximado de movimiento observado (minutos)",
     situaciones: [
@@ -506,6 +518,10 @@ const RASGOS = [
       noConcluyas: "Que una dificultad ante un cambio significa por sí sola una baja capacidad de adaptación. A veces lo que necesita no es «adaptarse más rápido», sino anticipación, tiempo, apoyo visual o una transición gradual.",
       proposito: "Descubrir qué tipos de cambios requieren mayor acompañamiento y qué formas de anticipación o apoyo facilitan las transiciones."
     },
+    espejo: {
+      moderada: "Si a ti los cambios te resultan fáciles y a tu hijo o hija no (o al revés), es probable que subestimes cuánto aviso previo necesita. Antes de un cambio, di en voz alta lo que va a pasar y cuándo — lo que para ti es obvio, para él o ella puede no serlo.",
+      amplia: "Una brecha amplia aquí suele generar la sensación de «siempre se lo tengo que repetir» o «me exaspera lo lento que es para cambiar de actividad». Construir una rutina de aviso (p. ej. «en 5 minutos nos vamos») no es ceder: es la adaptación que su ritmo necesita, igual que tú necesitas la tuya."
+    },
     situacionLabel: "Cambio o transición que ocurrió",
     datoLabel: "Tiempo aproximado para retomar o aceptar el cambio (minutos)",
     situaciones: [
@@ -585,6 +601,10 @@ const RASGOS = [
       pregunta: "Si había alguien conocido cerca, si sabía qué iba a ocurrir, si se le permitió observar antes de participar y si fue presionado para acercarse.",
       noConcluyas: "Que acercarse rápido sea «mejor» y acercarse lentamente sea «peor». Ser prudente, observar o necesitar tiempo no significa estar mal.",
       proposito: "Identificar cómo suele aproximarse a lo desconocido y qué apoyos facilitan que participe con seguridad y confianza."
+    },
+    espejo: {
+      moderada: "Si tú te lanzas a lo nuevo y tu hijo o hija necesita observar primero (o al revés), evita empujarlo a «ya entra, no pasa nada» — para él o ella sí puede sentirse apresurado. Ofrece quedarte cerca mientras observa, sin exigir que participe de inmediato.",
+      amplia: "Una brecha amplia aquí puede sentirse como «me da pena que se quede pegado a mí» o, al revés, como presión constante para acercarse. Acordar una señal para pedir tiempo (sin que signifique un no definitivo) suele bajar la tensión de ambos lados."
     },
     situacionLabel: "Situación nueva (personas, lugares, comidas)",
     datoLabel: "Tiempo de latencia u observación (minutos)",
@@ -675,6 +695,10 @@ const RASGOS = [
       noConcluyas: "Que detectar rápidamente un problema o un detalle signifique un «estado de ánimo negativo», ni que enfocarse en lo agradable signifique ignorar las dificultades. No usamos este rasgo para clasificar a un niño como positivo, negativo o quejumbroso.",
       proposito: "Conocer qué aspectos de las situaciones suelen captar su atención y cómo ayudarle a ampliar su manera de observar y responder."
     },
+    espejo: {
+      moderada: "Si uno de los dos tiende a notar primero lo que falta o salió mal, y el otro lo agradable, es fácil malinterpretar al otro como «negativo» o «despreocupado». Ninguna de las dos formas de mirar es incorrecta: nombrar la diferencia en voz alta («yo noto X, tú notas Y») evita el juicio.",
+      amplia: "Cuando la diferencia es marcada, cuídate de no etiquetar su forma de percibir como un defecto de carácter. Pregúntale qué fue lo que notó, en vez de corregir lo que sintió — eso mantiene abierta la conversación en lugar de cerrarla."
+    },
     situacionLabel: "Situación",
     datoLabel: "Enfoque predominante",
     extraLabel: "Comentario o reacción del niño/a",
@@ -759,6 +783,10 @@ const RASGOS = [
       pregunta: "Si la variación ocurrió una sola vez o se repite, si hubo algo diferente ese día (visita, viaje, enfermedad, cansancio) y si el niño tuvo suficiente descanso.",
       noConcluyas: "Que una rutina irregular signifique que el niño está haciendo algo mal, ni que la familia deba imponer horarios rígidos. Distinguimos un cambio aislado de un patrón que se repite.",
       proposito: "Identificar qué rutinas favorecen el bienestar del niño o niña, construyendo rutinas predecibles pero flexibles en lugar de horarios rígidos."
+    },
+    espejo: {
+      moderada: "Si tú funcionas bien con horarios flexibles y tu hijo o hija necesita más regularidad (o al revés), tu propia comodidad con el cambio puede hacerte subestimar cuánto le cuesta a él o ella una rutina alterada. Avisar con tiempo un cambio de horario ayuda más de lo que parece.",
+      amplia: "Una brecha amplia aquí suele sentirse como «es muy rígido/a» de un lado y «nadie respeta mis tiempos» del otro. Ninguno está mal: acuerden juntos qué partes de la rutina son innegociables y cuáles sí pueden moverse."
     },
     situacionLabel: "Función biológica",
     datoLabel: "Desviación respecto a la hora esperada",
@@ -859,6 +887,10 @@ const RASGOS = [
       noConcluyas: "Que una sensibilidad elevada ante determinado estímulo constituya por sí misma un diagnóstico o un problema.",
       proposito: "Identificar qué características del ambiente facilitan o dificultan la participación y qué ajustes hacen el entorno más cómodo y accesible."
     },
+    espejo: {
+      moderada: "Si a ti algo no te molesta y a tu hijo o hija sí (o al revés), es fácil pensar «está exagerando». Antes de restarle importancia, pregúntate si tú mismo podrías tolerarlo en el nivel de cansancio o sobrecarga en que él o ella está en ese momento.",
+      amplia: "Una brecha grande en sensibilidad al entorno no se resuelve pidiéndole que «se aguante»: se resuelve reduciendo o anticipando el estímulo cuando se pueda, y validando que lo que a ti no te afecta, a él o ella sí — sin que eso sea un defecto de ninguno de los dos."
+    },
     situacionLabel: "Estímulo del entorno (sensorial o emocional)",
     datoLabel: "Intensidad de la reacción",
     situaciones: [
@@ -939,6 +971,10 @@ const RASGOS = [
       pregunta: "Si la actividad estaba clara y era adecuada para lo que podía hacer en ese momento, y si hubo interrupciones, estímulos u otras demandas que pudieron afectar la continuidad.",
       noConcluyas: "Que responder a los estímulos del entorno signifique automáticamente que «no puede concentrarse». La atención depende también de la actividad, el ambiente, la motivación, el cansancio y los apoyos disponibles.",
       proposito: "Identificar qué condiciones ayudan a permanecer o retomar la participación en una actividad."
+    },
+    espejo: {
+      moderada: "Si a ti te resulta fácil sostener una actividad larga y a tu hijo o hija no (o al revés), evita medir su continuidad con tu propio estándar. Dividir la tarea en partes más cortas suele ayudar más que pedirle «más concentración».",
+      amplia: "Una brecha amplia aquí puede sentirse como impaciencia de tu parte o desconexión de la suya. Antes de insistir en que termine algo de un jalón, prueba anticipar pausas cortas — para muchos niños y niñas eso cambia por completo la capacidad de retomar."
     },
     situacionLabel: "Tarea principal o actividad",
     datoLabel: "Interrupciones observadas en 15 minutos",
@@ -1022,6 +1058,10 @@ const RASGOS = [
       pregunta: "Si la dificultad era adecuada, si comprendía qué tenía que hacer, si recibió ayuda suficiente y si se le permitió detenerse o cambiar de estrategia.",
       noConcluyas: "Que persistir más siempre sea mejor. Pedir ayuda, cambiar de estrategia o detenerse también puede ser una respuesta adecuada. Persistir ante una tarea no es lo mismo que insistir ante un límite o una negativa; esas situaciones no deben mezclarse en este rasgo.",
       proposito: "Conocer cómo enfrenta los desafíos y qué apoyo o ajuste facilita que continúe aprendiendo, sin convertir la persistencia en una obligación."
+    },
+    espejo: {
+      moderada: "Si tú sueles insistir hasta terminar algo y tu hijo o hija suelta la tarea más rápido (o al revés), cuídate de leer eso como flojera o terquedad. Pregunta qué parte se le dificultó antes de animarlo a seguir intentando.",
+      amplia: "Una brecha amplia aquí puede volverse un punto de choque frecuente («ríndete» vs. «no se rinde nunca»). Ninguna de las dos formas de enfrentar la dificultad es la correcta por sí sola: lo que ayuda es acordar juntos cuándo vale la pena seguir y cuándo está bien parar."
     },
     situacionLabel: "Desafío, obstáculo o meta",
     datoLabel: "Tiempo de esfuerzo o insistencia (minutos)",
@@ -1778,7 +1818,8 @@ function migrar(datos){
   // ejemplo para el futuro:
   // if((datos.version||0) < 2){ datos.algoNuevo = ...; }
   if(!Array.isArray(datos.episodios)) datos.episodios=[];
-  if(!datos.preferencias) datos.preferencias={textoGrande:false, altoContraste:false};
+  if(!datos.preferencias) datos.preferencias={textoGrande:false, altoContraste:false, lecturaSencilla:false};
+  if(datos.preferencias.lecturaSencilla===undefined) datos.preferencias.lecturaSencilla=false;
   if(!Array.isArray(datos.observacionesRapidas)) datos.observacionesRapidas=[];
   datos.episodios.forEach(e=>{ if(!Array.isArray(e.contexto)) e.contexto=[]; if(typeof e.contextoOtro!=="string") e.contextoOtro=""; if(!Array.isArray(e.apoyos)) e.apoyos=[]; if(typeof e.apoyosOtro!=="string") e.apoyosOtro=""; });
   datos.version = SCHEMA_VERSION;
@@ -1793,7 +1834,7 @@ let S = {
   umbrales:{},
   micro:[],
   observacionesRapidas:[],
-  preferencias:{textoGrande:false, altoContraste:false},
+  preferencias:{textoGrande:false, altoContraste:false, lecturaSencilla:false},
   legalAceptado:false,
   onboardingVisto:false
 };
@@ -1802,6 +1843,7 @@ function aplicarPreferencias(){
   const p=S.preferencias||{};
   document.body.classList.toggle("a11y-large", !!p.textoGrande);
   document.body.classList.toggle("a11y-contrast", !!p.altoContraste);
+  document.body.classList.toggle("a11y-simple", !!p.lecturaSencilla);
 }
 
 /* ─────────── reflexión de Nivel 3, por rasgo (solo se muestra si hay registros de ese rasgo) ─────────── */
@@ -2170,7 +2212,7 @@ function vRasgos(){
       </div>
     </div>
     
-<div class="card flow-steps" style="margin-bottom:14px">
+<div class="card flow-steps simple-hide" style="margin-bottom:14px">
   <div class="eyebrow">Así funciona CONOCIÉNDONOS</div>
   <div style="margin-top:8px"><b>1. Observar rápidamente</b><br><span class="hint">¿Qué pasó?</span></div>
   <div style="margin-top:8px"><b>2. Comprender cuando haya tiempo</b><br><span class="hint">¿Qué estaba pasando alrededor? ¿Qué apoyo recibió o podría ayudar?</span></div>
@@ -2309,7 +2351,7 @@ function vForm(){
       <input type="date" id="fecha" value="${F.fecha}">
       <label class="f">${esc(r.situacionLabel)}</label>
       <input type="text" id="sit" value="${esc(F.situacion)}" placeholder="${r.situaciones && r.situaciones[0]? "Ej. «"+esc(r.situaciones[0])+"»" : "Escríbelo o elige abajo"}">
-      <p class="hint" style="margin:4px 2px 0">Escríbelo corto, como el título de lo que pasó (qué ocurrió, no cómo reaccionó): así encaja mejor en las frases de acompañamiento que te va a sugerir la app.</p>
+      <p class="hint simple-hide" style="margin:4px 2px 0">Escríbelo corto, como el título de lo que pasó (qué ocurrió, no cómo reaccionó): así encaja mejor en las frases de acompañamiento que te va a sugerir la app.</p>
       <div class="chips" role="group" aria-label="Situaciones frecuentes">${situacionesPara(r).map(s=>`<button class="chip ${F.situacion===s?"on":""}" aria-pressed="${F.situacion===s}" data-sit="${esc(s)}">${esc(s)}</button>`).join("")}</div>
       ${!S.nino.etapa? `<p class="hint" style="margin:4px 2px 0">Elige la etapa de tu hijo o hija en la pantalla principal para ver más situaciones propias de su edad.</p>`:""}
 
@@ -2450,19 +2492,26 @@ function vEspejo(){
           return `<tr><td>${esc(r.corto)}</td><td class="num">${a}</td><td class="num">${p.toFixed(1)}</td><td>${z}</td></tr>`;
         }).join("")}
       </table>
-    </div>`;
+    </div>
+    ${(()=>{
+      const conBrecha = RASGOS.map(r=>{
+        const a = S.adulto[r.id], p = promedio(r.id);
+        if(a==null || p==null) return null;
+        const d = Math.abs(a-p);
+        if(d<=3) return null;
+        return {r, zona: d<=6?"moderada":"amplia"};
+      }).filter(Boolean);
+      if(!conBrecha.length) return "";
+      return `<div class="section-title">🧩 Qué podrías ajustar</div>
+      <div class="card">
+        <p class="hint" style="margin:0 0 10px">Esto no es lo que "está mal": es lo que suele ayudar cuando tú y tu hijo o hija responden distinto en un mismo rasgo.</p>
+        ${conBrecha.map(({r,zona})=>`<div class="m-rep"><div class="r">${esc(r.corto)} · ${zona==="amplia"?"brecha amplia":"brecha moderada"}</div><div style="font-size:14px;line-height:1.5">${esc(r.espejo[zona])}</div></div>`).join("")}
+      </div>`;
+    })()}
+  `;
   el.querySelectorAll("[data-a]").forEach(i=> i.oninput = e=>{
     S.adulto[+i.dataset.a] = +e.target.value; save(); vEspejo();
   });
-  const setA11y = (large, contrast)=>{
-    document.body.classList.toggle("a11y-large", !!large);
-    document.body.classList.toggle("a11y-contrast", !!contrast);
-    S.preferencias = Object.assign({}, S.preferencias||{}, {textoGrande:!!large, altoContraste:!!contrast});
-    save(); vPerfil();
-  };
-  $("#a11y-normal").onclick = ()=> setA11y(false, document.body.classList.contains("a11y-contrast"));
-  $("#a11y-large").onclick = ()=> setA11y(true, document.body.classList.contains("a11y-contrast"));
-  $("#a11y-contrast").onclick = ()=> setA11y(document.body.classList.contains("a11y-large"), !document.body.classList.contains("a11y-contrast"));
 }
 
 /* ─────────── vista: perfil (radar) ─────────── */
@@ -2619,7 +2668,7 @@ function reporteHTML(){
     <h2>Patrones observados</h2>
     <p>Nombre o apodo: ${esc(S.nino.nombre||"—")}<br>Edad o etapa: ${esc(S.nino.edad||"—")}</p>
 
-    <div class="rep-foot">Generado con la Conociéndonos · lalitoelprofefulanito-dot.github.io/Bitacora-Temperamento-Infantil · Los datos de este reporte viven únicamente en el dispositivo de origen.</div>`;
+    <div class="rep-foot">Generado con Conociéndonos · lalitoelprofefulanito-dot.github.io/Bitacora-Temperamento-Infantil · Los datos de este reporte viven únicamente en el dispositivo de origen.</div>`;
 }
 function imprimirReporteCompleto(){
   $("#reporteImprimible").innerHTML = reporteHTML();
@@ -2903,8 +2952,12 @@ function vPerfil(){
       <div class="row2" style="margin-top:10px">
         <button class="btn quiet sm" id="a11y-normal" aria-pressed="${!document.body.classList.contains("a11y-large")}">Texto normal</button>
         <button class="btn quiet sm" id="a11y-large" aria-pressed="${document.body.classList.contains("a11y-large")}">Texto grande</button>
-        <button class="btn quiet sm" id="a11y-contrast" aria-pressed="${document.body.classList.contains("a11y-contrast")}">Alto contraste</button>
       </div>
+      <div class="row2" style="margin-top:8px">
+        <button class="btn quiet sm" id="a11y-contrast" aria-pressed="${document.body.classList.contains("a11y-contrast")}">Alto contraste</button>
+        <button class="btn quiet sm" id="a11y-simple" aria-pressed="${document.body.classList.contains("a11y-simple")}">Lectura sencilla</button>
+      </div>
+      <p class="hint" style="margin:8px 2px 0">«Lectura sencilla» oculta las explicaciones y notas de apoyo, y deja solo lo necesario para registrar.</p>
     </div>
     <div class="card" style="margin-top:14px">
       <div class="eyebrow">Una idea para recordar</div>
@@ -3029,9 +3082,10 @@ function vPerfil(){
       <p class="hint" style="margin:6px 2px 10px">Guárdalo en Google Drive, OneDrive, o mándatelo por correo — así no lo pierdes si formateas el teléfono o cambias de celular. Trae las tres secciones (rasgos, espejo y perfil); con "Restaurar" lo regresas a cualquier dispositivo.</p>
       <button class="btn quiet sm" id="print">Imprimir o guardar en PDF (rasgos + espejo + perfil)</button>
       <div class="row2" style="margin-top:8px">
-        <button class="btn quiet sm" id="verOnb">Cómo funciona</button>
+        <button class="btn quiet sm" id="verOnb">Guía rápida</button>
         <button class="btn quiet sm" id="verLegal">Aviso legal</button>
       </div>
+      <button class="btn quiet sm" id="verFundamento" style="margin-top:8px">📖 Cómo funciona</button>
       <button class="btn quiet sm" id="reset" style="color:#8A4B1F">Borrar todos los datos</button>
     </div>
     <div class="card" style="margin-top:14px">
@@ -3084,6 +3138,15 @@ function vPerfil(){
   $("#print").onclick = ()=> imprimirReporteCompleto();
   $("#verOnb").onclick = ()=> showOnboarding(0, true);
   $("#verLegal").onclick = ()=> showLegal(true);
+  $("#verFundamento").onclick = ()=> showFundamento();
+  const setA11y = (patch)=>{
+    S.preferencias = Object.assign({}, S.preferencias||{}, patch);
+    save(); aplicarPreferencias(); vPerfil();
+  };
+  $("#a11y-normal").onclick = ()=> setA11y({textoGrande:false});
+  $("#a11y-large").onclick = ()=> setA11y({textoGrande:true});
+  $("#a11y-contrast").onclick = ()=> setA11y({altoContraste:!S.preferencias.altoContraste});
+  $("#a11y-simple").onclick = ()=> setA11y({lecturaSencilla:!S.preferencias.lecturaSencilla});
   $("#irFeedback").onclick = ()=>{ ctx.volverA = "perfil"; ir("feedback"); };
   $("#irExportarProf").onclick = ()=> mostrarExportarProfesionista();
   $("#reset").onclick = ()=>{
@@ -3091,7 +3154,7 @@ function vPerfil(){
       "Esto borra TODOS los registros de este dispositivo y no se puede deshacer.\n\nSi tienes datos que te importan, usa antes \"Descargar respaldo (JSON)\".\n\nEscribe BORRAR para confirmar:",
       "BORRAR",
       ()=>{
-        S = {version:SCHEMA_VERSION, nino:{nombre:"",edad:"",etapa:""}, episodios:[], adulto:{}, umbrales:{}, micro:[], preferencias:{textoGrande:false, altoContraste:false}, legalAceptado:S.legalAceptado, onboardingVisto:S.onboardingVisto};
+        S = {version:SCHEMA_VERSION, nino:{nombre:"",edad:"",etapa:""}, episodios:[], adulto:{}, umbrales:{}, micro:[], preferencias:{textoGrande:false, altoContraste:false, lecturaSencilla:false}, legalAceptado:S.legalAceptado, onboardingVisto:S.onboardingVisto};
         aplicarPreferencias();
         save(); ir("rasgos");
       }
@@ -3166,6 +3229,84 @@ function showLegal(revisita){
     if(!revisita && !S.onboardingVisto) showOnboarding(0);
     else { overlayHide(); render(); }
   };
+}
+
+function showFundamento(){
+  overlayShow(`
+    <div class="eyebrow">Fase 1 · Filosofía y propósito</div>
+    <h2 id="sheetTitle">Fundamento de la herramienta</h2>
+
+    <details open>
+      <summary><b>Propósito</b></summary>
+      <p><b>Conociéndonos</b> existe para ayudar a familias de escuelas públicas mexicanas a observar mejor el temperamento de sus hijos e hijas, encontrar un lenguaje compartido para nombrar lo que ven, y decidir —junto con la escuela y con un especialista cuando haga falta— qué ajustes de acompañamiento favorecen su bienestar y su participación.</p>
+    </details>
+
+    <details>
+      <summary><b>Qué problema busca atender</b></summary>
+      <p>Muchas familias enfrentan reacciones intensas, dificultad con los cambios, sensibilidad al entorno u otras respuestas de sus hijos e hijas sin tener herramientas para nombrarlas ni para decidir qué hacer. Ante la incertidumbre, algunas familias se vuelven muy permisivas o muy restrictivas —no por desinterés, sino por falta de orientación específica—, sobre todo cuando el niño o la niña tiene una discapacidad o una necesidad particular y la escuela no siempre cuenta con recursos adicionales para atenderla.</p>
+    </details>
+
+    <details>
+      <summary><b>Qué sí hace</b></summary>
+      <ul style="margin:6px 0 0; padding-left:20px; line-height:1.6">
+        <li>Ayuda a registrar episodios cotidianos junto con su contexto: qué pasaba alrededor, qué apoyo hubo o podría ayudar.</li>
+        <li>Organiza esos registros en 9 rasgos del temperamento para encontrar patrones de respuesta, no características fijas.</li>
+        <li>Sugiere microacciones de acompañamiento que la familia puede probar y evaluar en su propio contexto.</li>
+        <li>Ofrece una Bitácora Espejo para que el adulto reflexione sobre sus propias expectativas y respuestas.</li>
+        <li>Genera reportes que la familia puede compartir con la escuela o con un profesional, si así lo decide.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><b>Qué no hace</b></summary>
+      <ul style="margin:6px 0 0; padding-left:20px; line-height:1.6">
+        <li>No diagnostica ninguna condición, discapacidad ni trastorno.</li>
+        <li>No sustituye la valoración de un profesional de la salud o de educación especial.</li>
+        <li>No produce un puntaje global, un perfil psicológico ni una etiqueta sobre el niño o la niña — cada rasgo se interpreta por separado.</li>
+        <li>No decide por la familia: las bandas y promedios son una referencia; la interpretación final siempre queda en manos del adulto.</li>
+        <li>No envía datos del niño o niña a ningún servicio externo por defecto.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><b>A quién está dirigida</b></summary>
+      <p>A madres, padres, tutores y cuidadores de niñas y niños de escuelas primarias públicas en México — incluyendo, de manera explícita, a familias que acompañan a un hijo o hija con discapacidad o con necesidades específicas de apoyo, con o sin acceso a evaluación especializada. No requiere conocimientos previos de psicología ni de neurodesarrollo.</p>
+    </details>
+
+    <details>
+      <summary><b>Principios éticos</b></summary>
+      <ul style="margin:6px 0 0; padding-left:20px; line-height:1.6">
+        <li>Observación situacional antes que etiqueta: se describe lo que ocurrió en un momento y contexto concretos, no lo que "es" el niño o la niña.</li>
+        <li>Corresponsabilidad: ningún actor —familia, escuela o especialista— resuelve solo lo que observa la bitácora; el reporte existe para compartirse, no para quedarse aislado.</li>
+        <li>Gratuidad y accesibilidad: sin costo, sin cuenta, pensada para funcionar con conectividad limitada y en teléfonos de gama baja.</li>
+        <li>Transparencia: la aplicación nunca promete algo que su código no cumple; lo que dice que hace con los datos es exactamente lo que hace.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><b>Fundamento conceptual y autoría</b></summary>
+      <p><b>Base conceptual:</b> Thomas, A. &amp; Chess, S. (1956). <i>New York Longitudinal Study</i>. Establecieron el modelo original de los rasgos del temperamento infantil.</p>
+      <p><b>Adaptación al español:</b> Andrea Cardemil Ricke, <i>Apego seguro</i>, cap. II (2017). Adaptó y explicó el modelo para público hispanohablante.</p>
+      <p><b>Operacionalización de esta herramienta:</b> Prof. Eduardo Kantún Martínez, Escuela Primaria "Molino de Rosas", CDMX. Tradujo el marco conceptual en situaciones, preguntas de contexto, umbrales y microacciones concretas para esta bitácora.</p>
+      <p class="hint">La herramienta toma como referencia el marco conceptual de Thomas y Chess y la adaptación señalada, y desarrolla una operacionalización propia para fines de observación reflexiva familiar. No se atribuye a esos autores los umbrales, preguntas ni microacciones específicas de esta aplicación: esos corresponden a su desarrollo particular.</p>
+    </details>
+
+    <details>
+      <summary><b>Relación entre temperamento, contexto y conducta</b></summary>
+      <p>Una misma conducta puede tener explicaciones distintas según el contexto en el que ocurre. Por eso la herramienta no sigue la lógica <b>conducta → puntuación → etiqueta</b>, sino el ciclo <b>observar → contexto → reflexionar → ajustar el entorno → volver a observar</b>. El temperamento es una forma de responder, no un destino: el mismo rasgo puede expresarse de maneras muy distintas según el descanso, el apoyo disponible, la claridad de la actividad o las condiciones del ambiente.</p>
+    </details>
+
+    <details>
+      <summary><b>Principio de no diagnóstico</b></summary>
+      <p>Ningún resultado de esta bitácora —ni un episodio, ni un promedio, ni un patrón repetido— constituye un diagnóstico. La aplicación organiza observaciones para ayudar a la familia a pensar, no para decidir qué "tiene" un niño o una niña. Cuando algo preocupa de forma sostenida, la orientación siempre es la misma: compartirlo con el pediatra, la escuela o un especialista.</p>
+    </details>
+
+    <details>
+      <summary><b>Principio de no culpabilización</b></summary>
+      <p>Observar no significa culpar. Una reacción difícil no significa que el niño o la niña sea "malo", "malcriado" ni que el adulto esté criando mal. La bitácora asume que la familia está intentando resolver una situación y necesita herramientas, no que está criando mal. Cuando el adulto y el niño difieren en un rasgo, eso tampoco significa que alguno de los dos esté mal: significa que necesitan formas distintas de acompañarse.</p>
+    </details>
+    <button class="btn" id="ob-ok">Entendido</button>`);
+  $("#ob-ok").onclick = overlayHide;
 }
 
 function showOnboarding(step, revisita){
