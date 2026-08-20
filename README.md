@@ -25,7 +25,7 @@ Una bitácora para que padres, madres y cuidadores registren episodios cotidiano
 - Sin backend, sin base de datos, sin cuentas.
 - Service Worker con caché de la aplicación completa: instálala una vez con internet y después funciona sin conexión.
 - Datos en IndexedDB con fallback a localStorage.
-- Preferencias de accesibilidad (texto grande, alto contraste) guardadas en tu dispositivo.
+- Preferencias de accesibilidad (texto grande, alto contraste, lectura sencilla) guardadas en tu dispositivo.
 - Ícono táctil y accesible en todos los navegadores.
 
 ## Autoría
