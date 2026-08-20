@@ -2313,18 +2313,25 @@ function vRasgo(){
       ? `Este rasgo se registra por categoría, no por umbral numérico. Opciones: ${r.opciones.map(o=>esc(o[0])).join(" · ")}.`
       : `Con el dato en <b>${esc(r.unidad||"categoría")}</b>, la app propone: banda baja hasta ${umbral(r)[0]}, banda media hasta ${umbral(r)[1]}, banda alta por encima.`}</div></details>
     ${lista.length? `<div class="section-title">Registros</div><div class="card" style="padding:4px 16px 12px">
+      ${!microPendiente(r.id) ? `<p class="hint" style="margin:8px 0 4px">Toca un registro para ver sugerencias de acompañamiento.</p>`:""}
       ${lista.slice().reverse().map(e=>`
-        <div class="log-item">
+        <div class="log-item" data-verop="${e.id}" style="cursor:pointer">
           <span class="d">${esc(e.fecha.slice(5).replace("-","/"))}</span>
           <span class="s">${esc(e.situacion||"(sin situación)")}
             <div class="hint" style="margin-top:2px">${esc(String(e.dato))}${r.tipo==="num"?" "+esc(r.unidad):""} · sugerida ${BANDAS[e.banda]}</div></span>
           <span class="p">${e.puntuacion}</span>
-          <button class="del" data-del="${e.id}">✕</button>
+          <button class="del" data-del="${e.id}" aria-label="Eliminar registro">✕</button>
         </div>`).join("")}
     </div>`:""}`;
   $("#nuevo").onclick = ()=> ir("form",{id:r.id});
-  el.querySelectorAll("[data-del]").forEach(b=> b.onclick = ()=>{
+  el.querySelectorAll("[data-del]").forEach(b=> b.onclick = (ev)=>{
+    ev.stopPropagation();
     S.episodios = S.episodios.filter(x=>x.id !== b.dataset.del); save(); render();
+  });
+  el.querySelectorAll("[data-verop]").forEach(div=> div.onclick = ()=>{
+    if(microPendiente(r.id)) return; // ya hay una tarjeta de microacción en curso arriba; se resuelve esa primero
+    const e = lista.find(x=>x.id===div.dataset.verop); if(!e) return;
+    showMicroOferta(e, "");
   });
   el.querySelectorAll("[data-mres]").forEach(b=> b.onclick = ()=>{
     const mp = microPendiente(r.id); if(!mp) return;
